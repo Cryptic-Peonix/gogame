@@ -1,7 +1,7 @@
 package me.teamone.gogame.gameobjects;
 
 import me.teamone.gogame.exceptions.NoStoneException;
-import me.teamone.helpers.Team;
+import me.teamone.gogame.helpers.Team;
 
 /**
  * Class for representing a space on the board.
