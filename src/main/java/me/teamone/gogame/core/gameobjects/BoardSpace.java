@@ -1,7 +1,5 @@
 package me.teamone.gogame.core.gameobjects;
 
-import me.teamone.gogame.core.NoStoneException;
-import me.teamone.gogame.core.Stone;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.helpers.Team;
 
