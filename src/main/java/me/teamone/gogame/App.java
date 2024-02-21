@@ -5,6 +5,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import me.teamone.gogame.gameobjects.Board;
+
+import java.util.Arrays;
 
 
 /**
@@ -21,7 +24,13 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        //launch(); can turn this back on later, doing cmd testing rn
+        test();
+    }
+
+    public static void test() {
+        Board board = new Board();
+        System.out.println(board.getSpecificSpace(22, 1).isCaptured());
     }
 
 }
