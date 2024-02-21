@@ -118,7 +118,7 @@ public class BoardSpace {
      * @return True if the space has no stone, false if it has a stone.
      */
     public boolean isEmpty() {
-        return !state.equals(SpaceState.FILLED);
+        return Objects.isNull(stone);
     }
 
 }
