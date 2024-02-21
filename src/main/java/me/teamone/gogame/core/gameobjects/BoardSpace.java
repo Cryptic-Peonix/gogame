@@ -1,6 +1,7 @@
 package me.teamone.gogame.core.gameobjects;
 
 import me.teamone.gogame.core.exceptions.NoStoneException;
+import me.teamone.gogame.core.exceptions.StonePlacementException;
 import me.teamone.gogame.core.helpers.Team;
 import me.teamone.gogame.core.helpers.SpaceState;
 
@@ -42,7 +43,11 @@ public class BoardSpace {
      * Places a stone on the board.
      * @param stone The stone to place.
      */
-    public void placeStone(Stone stone) {
+    public void placeStone(Stone stone) throws StonePlacementException {
+        if (!state.equals(SpaceState.OPEN)) {
+            throw new StonePlacementException("Cannot place stone on space x:" + gridSpace[0] + " y:" + gridSpace[1]
+                    + "! Space must be empty, is currently: " + state);
+        }
         this.stone = stone;
         this.state = SpaceState.FILLED;
     }
@@ -54,6 +59,7 @@ public class BoardSpace {
     public void captureSpace(Team team) {
         this.state = SpaceState.CAPTURED;
         this.captureOwner = team;
+
     }
 
     /**
