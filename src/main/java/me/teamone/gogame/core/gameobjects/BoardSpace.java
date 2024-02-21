@@ -57,9 +57,9 @@ public class BoardSpace {
      * @param team The team to set the capture to.
      */
     public void captureSpace(Team team) {
-        this.state = SpaceState.CAPTURED;
-        this.captureOwner = team;
-
+        state = SpaceState.CAPTURED;
+        captureOwner = team;
+        stone = null;
     }
 
     /**
