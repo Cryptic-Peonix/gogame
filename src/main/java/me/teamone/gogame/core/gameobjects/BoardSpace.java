@@ -1,7 +1,9 @@
-package me.teamone.gogame.gameobjects;
+package me.teamone.gogame.core.gameobjects;
 
-import me.teamone.gogame.exceptions.NoStoneException;
-import me.teamone.gogame.helpers.Team;
+import me.teamone.gogame.core.NoStoneException;
+import me.teamone.gogame.core.Stone;
+import me.teamone.gogame.core.exceptions.NoStoneException;
+import me.teamone.gogame.core.helpers.Team;
 
 /**
  * Class for representing a space on the board.

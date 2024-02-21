@@ -1,4 +1,4 @@
-package me.teamone.gogame.exceptions;
+package me.teamone.gogame.core.exceptions;
 
 /**
  * Error to be called when a space is filled.

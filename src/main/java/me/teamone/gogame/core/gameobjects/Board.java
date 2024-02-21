@@ -1,7 +1,11 @@
-package me.teamone.gogame.gameobjects;
+package me.teamone.gogame.core.gameobjects;
 
-import me.teamone.gogame.exceptions.SpaceFilledException;
-import me.teamone.gogame.exceptions.isCapturedException;
+import me.teamone.gogame.core.BoardSpace;
+import me.teamone.gogame.core.SpaceFilledException;
+import me.teamone.gogame.core.Stone;
+import me.teamone.gogame.core.exceptions.SpaceFilledException;
+import me.teamone.gogame.core.exceptions.isCapturedException;
+import me.teamone.gogame.core.isCapturedException;
 
 import java.util.Arrays;
 

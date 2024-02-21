@@ -1,6 +1,6 @@
-package me.teamone.gogame.gameobjects;
+package me.teamone.gogame.core.gameobjects;
 
-import me.teamone.gogame.helpers.Team;
+import me.teamone.gogame.core.helpers.Team;
 
 /**
  * Stone object.

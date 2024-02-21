@@ -1,4 +1,4 @@
-package me.teamone.gogame.helpers;
+package me.teamone.gogame.core.helpers;
 
 import javafx.scene.paint.Color;
 

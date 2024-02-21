@@ -1,4 +1,4 @@
-package me.teamone.gogame.exceptions;
+package me.teamone.gogame.core.exceptions;
 
 /**
  * Exception for capture exceptions.
