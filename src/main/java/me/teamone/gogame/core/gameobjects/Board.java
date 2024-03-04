@@ -5,6 +5,7 @@ import me.teamone.gogame.core.exceptions.isCapturedException;
 
 
 import java.util.Arrays;
+import javafx.scene.layout.GridPane;
 
 /**
  * Class to represent the game board.
@@ -17,6 +18,14 @@ public class Board {
     private final int ySize;
 
     /**
+     * Added by Taran
+     *
+     * Board's GridPane
+     */
+    private final GridPane gridPane;
+
+
+    /**
      * Constructor; creates a board object.
      * @param x The x size of the grid.
      * @param y The y size of the grid.
@@ -24,6 +33,11 @@ public class Board {
     public Board(int x, int y) {
         this.xSize = x;
         this.ySize = y;
+
+        //Added by Taran
+        //instantiates the board's GridPane
+        this.gridPane = new GridPane();
+
         initBoard();
     }
 
@@ -34,6 +48,11 @@ public class Board {
     public Board() {
         this.xSize = 19;
         this.ySize = 19;
+
+        //Added by Taran
+        //instantiates the board's GridPane
+        this.gridPane = new GridPane();
+
         initBoard();
     }
 
@@ -45,7 +64,12 @@ public class Board {
         for (int i = 0; i < this.xSize; i++) {
             for (int j = 0; j < this.ySize; j++) {
                 int[] space = {i, j};
-                this.board[i][j] = new BoardSpace(space);
+                BoardSpace boardSpace = new BoardSpace(space);
+                this.board[i][j] = boardSpace;
+
+                //Added by Taran
+                //Populates the board's GridPane with BoardSpace StackPanes
+                this.gridPane.add(boardSpace.drawBoardSpace(), i, j);
             }
         }
     }
@@ -88,4 +112,12 @@ public class Board {
             System.out.println("Row #" + i + ":" + Arrays.toString(this.board[i]));
         }
     }
+
+    /**
+     * Added By Taran
+     *
+     * Draws the Board
+     * @return GridPane the size of the board containing BoardSpace StackPane
+     */
+    public GridPane drawBoard() { return gridPane; }
 }

@@ -7,10 +7,21 @@ import me.teamone.gogame.core.helpers.SpaceState;
 
 import java.util.Objects;
 
+import javafx.scene.layout.StackPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 /**
  * Class for representing a space on the board.
  */
 public class BoardSpace {
+
+    /**
+     * Added by Taran
+     *
+     *Constant for boardspace image url
+     */
+    private final String IMAGE_URL = "/images/test_boardspace.png";
 
     /**
      * Container for the space's stone.
@@ -31,12 +42,29 @@ public class BoardSpace {
     private SpaceState state;
 
     /**
+     * Added by Taran
+     *
+     * BoardSpace's StackPane
+     */
+    private final StackPane pane;
+
+    /**
      * Constructor.
      * @param gridSpace The position on the grid.
      */
     public BoardSpace(int[] gridSpace) {
         this.state = SpaceState.OPEN;
         this.gridSpace = gridSpace;
+
+        //Added by Taran
+        //Instantiates StackPane and stacks tile-able image on top
+        this.pane = new StackPane();
+
+        //add try block
+        Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 50, 50, false, false);
+
+        ImageView imgView = new ImageView(img);
+        pane.getChildren().add(imgView);
     }
 
     /**
@@ -120,5 +148,13 @@ public class BoardSpace {
     public boolean isEmpty() {
         return Objects.isNull(stone);
     }
+
+    /**
+     * Added by Taran
+     *
+     * Draws BoardSpace
+     * @return StackPane containing image tile-able image;
+     */
+    public StackPane drawBoardSpace() { return pane; }
 
 }
