@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import me.teamone.gogame.client.TitlePage;
 import me.teamone.gogame.core.gameobjects.Board;
 
 
@@ -19,7 +20,7 @@ public class App extends Application {
         Board board = new Board(5, 5);
 
         borderPane.setCenter(board.drawBoard());
-        Scene scene = new Scene(borderPane);
+        Scene scene = new Scene(new TitlePage());
         stage.setScene(scene);
         stage.show();
     }
