@@ -1,11 +1,14 @@
 package me.teamone.gogame.core.gameobjects;
 
+import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.SpaceFilledException;
+import me.teamone.gogame.core.exceptions.StonePlacementException;
 import me.teamone.gogame.core.exceptions.isCapturedException;
 
 
 import java.util.Arrays;
 import javafx.scene.layout.GridPane;
+import me.teamone.gogame.core.helpers.SpaceState;
 
 /**
  * Class to represent the game board.
@@ -80,8 +83,17 @@ public class Board {
      * @param gridPos The space to place the stone on.
      * @throws SpaceFilledException Will throw if the space is already filled or captured
      */
-    public void placeStone(Stone stone, int[] gridPos) throws SpaceFilledException, isCapturedException {
-        //TODO: MAKE ME
+    public void placeStone(Stone stone, int[] gridPos) throws SpaceFilledException, isCapturedException, NoStoneException, StonePlacementException {
+        int xPos = gridPos[0];
+        int yPos = gridPos[1];
+        if (this.getSpecificSpace(xPos, yPos).isCaptured()) {
+            throw new isCapturedException("Space at " + xPos + "x" + yPos + " is already captured!");
+        }
+        if (this.getSpecificSpace(xPos, yPos).getState() == SpaceState.FILLED) {
+            throw new SpaceFilledException("Space at " + xPos + "x" + yPos + " is already filled by a " +
+                    this.getSpecificSpace(xPos, yPos).getStone().getTeam().toString() + " space!");
+        }
+        this.getSpecificSpace(xPos, yPos).placeStone(stone);
     }
 
     /**
