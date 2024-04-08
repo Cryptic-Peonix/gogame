@@ -9,7 +9,8 @@ import javafx.scene.paint.Color;
  */
 public enum Team {
     WHITE(Color.WHITE),
-    BLACK(Color.BLACK);
+    BLACK(Color.BLACK),
+    TIE(Color.BEIGE);
 
     /**
      * The color used to represent the team.
