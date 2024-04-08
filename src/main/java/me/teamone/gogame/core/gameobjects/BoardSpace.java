@@ -157,4 +157,8 @@ public class BoardSpace {
      */
     public StackPane drawBoardSpace() { return pane; }
 
+    public SpaceState getState() {
+        return this.state;
+    }
+
 }
