@@ -54,10 +54,10 @@ public class Game {
     public void playerTurn(Player player) throws StonePlacementException, SpaceFilledException, isCapturedException, NoStoneException {
         // get x, and y of location to attempt placement. This is done with cmd for now, must change when gui is created.
         Scanner scan = new Scanner(System.in);
-        System.out.println("Please enter the x coordinate of the space you want to place ("
+        System.out.println(player.getName() + " please enter the x coordinate of the space you want to place ("
                 + this.board.getxSize() + "x" + this.board.getySize() + "):");
         int coordX = scan.nextInt();
-        System.out.println("Please enter the y coordinate of the space you want to place ("
+        System.out.println(player.getName() + " please enter the y coordinate of the space you want to place ("
                 + this.board.getxSize() + "x" + this.board.getySize() + "):");
         int coordY = scan.nextInt();
         // create the stone
@@ -67,6 +67,7 @@ public class Game {
         this.board.placeStone(stone, coords);
         // if nothing goes wrong, incriment counter
         this.stoneIDcounter++; // may move to game loop?
+        this.board.printBoard();
     }
 
     /**
