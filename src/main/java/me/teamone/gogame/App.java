@@ -5,7 +5,14 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import me.teamone.gogame.client.TitlePage;
+import me.teamone.gogame.core.Game;
+import me.teamone.gogame.core.exceptions.NoStoneException;
+import me.teamone.gogame.core.exceptions.SpaceFilledException;
+import me.teamone.gogame.core.exceptions.StonePlacementException;
+import me.teamone.gogame.core.exceptions.isCapturedException;
 import me.teamone.gogame.core.gameobjects.Board;
+import me.teamone.gogame.core.gameobjects.Player;
+import me.teamone.gogame.core.helpers.Team;
 
 
 /**
@@ -26,13 +33,21 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        launch(); //can turn this back on later, doing cmd testing rn
-        //test();
+        //launch(); //can turn this back on later, doing cmd testing rn
+        test();
     }
 
     public static void test() {
-        Board board = new Board();
-        System.out.println(board.getSpecificSpace(22, 1).isCaptured());
+        Player bp = new Player("Joe Schmoe", Team.BLACK);
+        Player wp = new Player("Steve Pineapple", Team.WHITE);
+        Game game = new Game(bp, wp, 0, 19);
+
+        try {
+            game.playerTurn(game.getWhitePlayer());
+            game.playerTurn(game.getBlackPlayer());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }
