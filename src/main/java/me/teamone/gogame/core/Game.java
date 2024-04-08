@@ -1,5 +1,6 @@
 package me.teamone.gogame.core;
 
+import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.SpaceFilledException;
 import me.teamone.gogame.core.exceptions.StonePlacementException;
 import me.teamone.gogame.core.exceptions.isCapturedException;
@@ -50,7 +51,7 @@ public class Game {
      * Method for a player turn
      * @param player The player object to effect.
      */
-    public void playerTurn(Player player) throws StonePlacementException, SpaceFilledException, isCapturedException {
+    public void playerTurn(Player player) throws StonePlacementException, SpaceFilledException, isCapturedException, NoStoneException {
         // get x, and y of location to attempt placement. This is done with cmd for now, must change when gui is created.
         Scanner scan = new Scanner(System.in);
         System.out.println("Please enter the x coordinate of the space you want to place ("
