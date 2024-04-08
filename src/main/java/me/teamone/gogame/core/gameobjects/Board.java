@@ -103,6 +103,14 @@ public class Board {
         return this.board[x][y];
     }
 
+    public int getxSize() {
+        return this.xSize;
+    }
+
+    public int getySize() {
+        return ySize;
+    }
+
     /**
      * Print the game board to the console.
      * Used for testing.
