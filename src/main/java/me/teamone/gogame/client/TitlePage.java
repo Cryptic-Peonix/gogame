@@ -1,11 +1,13 @@
 package me.teamone.gogame.client;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
 /**Class to create a title page with the game title, a start button,
  * an exit button, and a rules button
@@ -34,7 +36,7 @@ public class TitlePage extends StackPane {
         btnStart = createStyledButton("Start");
         //Start button click event handler
         btnStart.setOnAction(e -> {
-            //add event handler code here
+            startGame();
         });
 
         //Quit button
@@ -46,7 +48,7 @@ public class TitlePage extends StackPane {
 
         //Rules Button
         btnRules = createStyledButton("Rules");
-        //Start button click event handler
+        //Rules button click event handler
         btnRules.setOnAction(e -> {
             //add event handler code here
         });
@@ -109,5 +111,17 @@ public class TitlePage extends StackPane {
         button.setOnMouseReleased(e -> button.setStyle("-fx-font-size: 16px; -fx-padding: 10px 20px; -fx-background-color: #2196F3; -fx-text-fill: white;"));
 
         return button;
+    }
+
+    /**
+     * Starts the game, called when the user presses the start button
+     *
+     */
+    private void startGame() {
+        Stage stage = (Stage) getScene().getWindow();
+        GamePage gamePage = new GamePage();
+        Scene scene = new Scene(gamePage);
+
+        stage.setScene(scene);
     }
 }

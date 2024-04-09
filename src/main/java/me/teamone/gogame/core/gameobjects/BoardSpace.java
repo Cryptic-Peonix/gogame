@@ -14,7 +14,7 @@ import javafx.scene.image.ImageView;
 /**
  * Class for representing a space on the board.
  */
-public class BoardSpace {
+public class BoardSpace extends StackPane {
 
     /**
      * Added by Taran
@@ -42,13 +42,6 @@ public class BoardSpace {
     private SpaceState state;
 
     /**
-     * Added by Taran
-     *
-     * BoardSpace's StackPane
-     */
-    private final StackPane pane;
-
-    /**
      * Constructor.
      * @param gridSpace The position on the grid.
      */
@@ -56,15 +49,11 @@ public class BoardSpace {
         this.state = SpaceState.OPEN;
         this.gridSpace = gridSpace;
 
-        //Added by Taran
-        //Instantiates StackPane and stacks tile-able image on top
-        this.pane = new StackPane();
-
         //add try block
-        Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 50, 50, false, false);
+        Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 43, 43, false, false);
 
         ImageView imgView = new ImageView(img);
-        pane.getChildren().add(imgView);
+        this.getChildren().add(imgView);
     }
 
     /**
@@ -148,14 +137,6 @@ public class BoardSpace {
     public boolean isEmpty() {
         return Objects.isNull(stone);
     }
-
-    /**
-     * Added by Taran
-     *
-     * Draws BoardSpace
-     * @return StackPane containing image tile-able image;
-     */
-    public StackPane drawBoardSpace() { return pane; }
 
     public SpaceState getState() {
         return this.state;

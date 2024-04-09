@@ -14,18 +14,11 @@ import me.teamone.gogame.core.helpers.SpaceState;
  * Class to represent the game board.
  * Is a 2d Array of BoardSpaces.
  */
-public class Board {
+public class Board extends GridPane{
 
     private BoardSpace[][] board;
     private final int xSize;
     private final int ySize;
-
-    /**
-     * Added by Taran
-     *
-     * Board's GridPane
-     */
-    private final GridPane gridPane;
 
 
     /**
@@ -37,10 +30,6 @@ public class Board {
         this.xSize = x;
         this.ySize = y;
 
-        //Added by Taran
-        //instantiates the board's GridPane
-        this.gridPane = new GridPane();
-
         initBoard();
     }
 
@@ -51,10 +40,6 @@ public class Board {
     public Board() {
         this.xSize = 19;
         this.ySize = 19;
-
-        //Added by Taran
-        //instantiates the board's GridPane
-        this.gridPane = new GridPane();
 
         initBoard();
     }
@@ -72,7 +57,7 @@ public class Board {
 
                 //Added by Taran
                 //Populates the board's GridPane with BoardSpace StackPanes
-                this.gridPane.add(boardSpace.drawBoardSpace(), i, j);
+                this.add(boardSpace, i, j);
             }
         }
     }
@@ -132,12 +117,4 @@ public class Board {
             System.out.println("Row #" + i + ":" + Arrays.toString(this.board[i]));
         }
     }
-
-    /**
-     * Added By Taran
-     *
-     * Draws the Board
-     * @return GridPane the size of the board containing BoardSpace StackPane
-     */
-    public GridPane drawBoard() { return gridPane; }
 }
