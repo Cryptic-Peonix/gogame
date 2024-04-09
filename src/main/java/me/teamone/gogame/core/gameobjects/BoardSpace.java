@@ -66,6 +66,7 @@ public class BoardSpace extends StackPane {
                     + "! Space must be empty, is currently: " + state);
         }
         this.stone = stone;
+        this.getChildren().add(stone);
         this.state = SpaceState.FILLED;
     }
 

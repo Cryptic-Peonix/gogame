@@ -1,12 +1,14 @@
 package me.teamone.gogame.core.gameobjects;
 
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import me.teamone.gogame.core.helpers.Team;
 
 /**
  * Stone object.
  * Used to represent a stone in game.
  */
-public class Stone {
+public class Stone extends Circle {
 
     private final Team team;
     /**
@@ -18,6 +20,10 @@ public class Stone {
     public Stone(Team team, int number) {
         this.team = team;
         this.number = number;
+
+        this.setRadius(15);
+        this.setStroke(Color.BLACK);
+        this.setFill(team.getColor());
     }
 
     public int getNumber() {

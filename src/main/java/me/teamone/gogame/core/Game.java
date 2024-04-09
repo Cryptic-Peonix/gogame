@@ -18,6 +18,13 @@ import java.util.Scanner;
 public class Game {
     private final Player blackPlayer;
     private final Player whitePlayer;
+
+    /*
+    Added by Taran
+    Property to hold the current turn
+     */
+    private Player currentPlayer;
+
     private final Board board;
     private final int handicapCount;
     /**
@@ -35,7 +42,10 @@ public class Game {
     public Game(Player bp, Player wp, int handicap, int size) {
         this.blackPlayer = bp;
         this.whitePlayer = wp;
-        this.board = new Board(size, size);
+
+        this.currentPlayer = blackPlayer;
+
+        this.board = new Board(size, size, this);
         this.handicapCount = handicap;
         this.stoneIDcounter = 0;
     }
@@ -48,10 +58,13 @@ public class Game {
     }
 
     /**
-     * Method for a player turn
+     * Method for a player turn in the command line
+     *
+     * Renamed to playerTurnCmd from playerTurn - Taran
+     *
      * @param player The player object to effect.
      */
-    public void playerTurn(Player player) throws StonePlacementException, SpaceFilledException, isCapturedException, NoStoneException {
+    public void playerTurnCmd(Player player) throws StonePlacementException, SpaceFilledException, isCapturedException, NoStoneException {
         // get x, and y of location to attempt placement. This is done with cmd for now, must change when gui is created.
         Scanner scan = new Scanner(System.in);
         System.out.println(player.getName() + " please enter the x coordinate of the space you want to place ("
@@ -69,6 +82,36 @@ public class Game {
         this.stoneIDcounter++; // may move to game loop?
         this.board.printBoard();
     }
+
+    /**
+     * Method for a player turn
+     *
+     * @param coords The coordinates to place a stone
+     */
+    public void playerTurn(int[] coords) throws StonePlacementException, SpaceFilledException, isCapturedException, NoStoneException {
+        Stone stone = new Stone(this.currentPlayer.getTeam(), stoneIDcounter);
+        // attempt to place stone
+        this.board.placeStone(stone, coords);
+        // if nothing goes wrong, increment counter
+        this.stoneIDcounter++; // may move to game loop?
+
+        //at the end of the turn, switch current players
+        switchCurrentPlayer();
+
+        //this.board.printBoard();
+    }
+
+    /*
+     * Switch the current players
+     */
+    public void switchCurrentPlayer() {
+        currentPlayer = (currentPlayer == blackPlayer) ? whitePlayer : blackPlayer;
+    }
+
+    /**
+     * Get the current player
+     */
+    public Player getCurrentPlayer() { return currentPlayer; }
 
     /**
      * Get the current winner of the game.

@@ -4,7 +4,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import me.teamone.gogame.core.Game;
 import me.teamone.gogame.core.gameobjects.Board;
+import me.teamone.gogame.core.gameobjects.Player;
+import me.teamone.gogame.core.helpers.Team;
 
 /**
  * Class to display the game.
@@ -15,7 +18,7 @@ import me.teamone.gogame.core.gameobjects.Board;
 public class GamePage extends BorderPane {
     /*Properties*/
     //stores Board object
-    private final Board board;
+    private final Game game;
 
     //stores Quit Button
     private final Button btnQuit;
@@ -30,7 +33,7 @@ public class GamePage extends BorderPane {
     //Empty Constructor
     public GamePage() {
         //create new generic board
-        board = new Board();
+        game = new Game(new Player("White", Team.WHITE), new Player("Black", Team.BLACK), 0, 19);
 
         //instantiate Quit button
         btnQuit = new Button("Quit");
@@ -41,7 +44,7 @@ public class GamePage extends BorderPane {
         hBoxButtons = createButtonBox();
 
         //place the board in the center
-        this.setCenter(board);
+        this.setCenter(game.getBoard());
         //place the button box on the top
         this.setTop(hBoxButtons);
 

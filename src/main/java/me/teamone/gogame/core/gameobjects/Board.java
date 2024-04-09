@@ -1,5 +1,6 @@
 package me.teamone.gogame.core.gameobjects;
 
+import me.teamone.gogame.core.Game;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.SpaceFilledException;
 import me.teamone.gogame.core.exceptions.StonePlacementException;
@@ -9,6 +10,7 @@ import me.teamone.gogame.core.exceptions.isCapturedException;
 import java.util.Arrays;
 import javafx.scene.layout.GridPane;
 import me.teamone.gogame.core.helpers.SpaceState;
+import me.teamone.gogame.core.helpers.Team;
 
 /**
  * Class to represent the game board.
@@ -20,15 +22,22 @@ public class Board extends GridPane{
     private final int xSize;
     private final int ySize;
 
+    /*
+    Added by Taran
+    Property to hold the Game the board is apart of
+     */
+    private final Game game;
 
     /**
      * Constructor; creates a board object.
      * @param x The x size of the grid.
      * @param y The y size of the grid.
      */
-    public Board(int x, int y) {
+    public Board(int x, int y, Game game) {
         this.xSize = x;
         this.ySize = y;
+
+        this.game = game;
 
         initBoard();
     }
@@ -37,9 +46,11 @@ public class Board extends GridPane{
      * Generic constructor.
      * Generates a 19x19 Grid.
      */
-    public Board() {
+    public Board(Game game) {
         this.xSize = 19;
         this.ySize = 19;
+
+        this.game = game;
 
         initBoard();
     }
@@ -58,6 +69,15 @@ public class Board extends GridPane{
                 //Added by Taran
                 //Populates the board's GridPane with BoardSpace StackPanes
                 this.add(boardSpace, i, j);
+
+                boardSpace.setOnMouseClicked(e -> {
+                    try {
+                        game.playerTurn(boardSpace.getGridSpace());
+                    }
+                    catch (Exception exc) {
+                        exc.printStackTrace();
+                    }
+                });
             }
         }
     }

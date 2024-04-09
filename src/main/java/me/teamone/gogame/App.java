@@ -39,8 +39,8 @@ public class App extends Application {
         Game game = new Game(bp, wp, 0, 19);
 
         try {
-            game.playerTurn(game.getWhitePlayer());
-            game.playerTurn(game.getBlackPlayer());
+            game.playerTurnCmd(game.getWhitePlayer());
+            game.playerTurnCmd(game.getBlackPlayer());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
