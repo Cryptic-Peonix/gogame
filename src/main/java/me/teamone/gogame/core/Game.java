@@ -4,11 +4,11 @@ import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.SpaceFilledException;
 import me.teamone.gogame.core.exceptions.StonePlacementException;
 import me.teamone.gogame.core.exceptions.isCapturedException;
-import me.teamone.gogame.core.gameobjects.Board;
-import me.teamone.gogame.core.gameobjects.Player;
-import me.teamone.gogame.core.gameobjects.Stone;
+import me.teamone.gogame.core.gameobjects.*;
 import me.teamone.gogame.core.helpers.Team;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -18,6 +18,9 @@ import java.util.Scanner;
 public class Game {
     private final Player blackPlayer;
     private final Player whitePlayer;
+    // ArrayLists for known strings
+    private final ArrayList<GoString> blackStrings;
+    private final ArrayList<GoString> whiteStrings;
 
     /*
     Added by Taran
@@ -48,6 +51,8 @@ public class Game {
         this.board = new Board(size, size, this);
         this.handicapCount = handicap;
         this.stoneIDcounter = 0;
+        this.blackStrings = new ArrayList<>();
+        this.whiteStrings = new ArrayList<>();
     }
 
     /**
@@ -177,5 +182,23 @@ public class Game {
      */
     public boolean isHandicap() {
         return this.handicapCount > 0;
+    }
+
+    /**
+     * Checks if a filled board space belongs to a known string.
+     * Only pass board spaces THAT CONTAIN STONES.
+     * @param space The space to check.
+     * @return True if it is in a string, false if not.
+     */
+    public boolean isPartOfString(BoardSpace space) {
+        Team team;
+        try {
+            team = space.getStone().getTeam();
+        } catch (NoStoneException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return false;
+        //TODO: FINISH ME
     }
 }
