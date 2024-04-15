@@ -10,7 +10,6 @@ import me.teamone.gogame.core.exceptions.isCapturedException;
 import java.util.Arrays;
 import javafx.scene.layout.GridPane;
 import me.teamone.gogame.core.helpers.SpaceState;
-import me.teamone.gogame.core.helpers.Team;
 
 /**
  * Class to represent the game board.
