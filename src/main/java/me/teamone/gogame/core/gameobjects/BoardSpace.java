@@ -116,6 +116,14 @@ public class BoardSpace extends StackPane {
         return gridSpace;
     }
 
+    public int getX() {
+        return gridSpace[0];
+    }
+
+    public int getY() {
+        return gridSpace[1];
+    }
+
     /**
      * Set the space to be "doomed"
      */
