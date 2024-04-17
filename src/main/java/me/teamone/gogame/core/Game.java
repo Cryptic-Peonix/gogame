@@ -1,5 +1,7 @@
 package me.teamone.gogame.core;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.SpaceFilledException;
 import me.teamone.gogame.core.exceptions.StonePlacementException;
@@ -28,6 +30,12 @@ public class Game {
      */
     private Player currentPlayer;
 
+    /*
+    Added by Taran
+    Property to hold the string to display the current player's turn
+     */
+    private StringProperty currentPlayerStringProperty = new SimpleStringProperty("");
+
     private final Board board;
     private final int handicapCount;
     /**
@@ -47,6 +55,7 @@ public class Game {
         this.whitePlayer = wp;
 
         this.currentPlayer = blackPlayer;
+        this.currentPlayerStringProperty.set(currentPlayer.getName() + "'s Turn");
 
         this.board = new Board(size, size, this);
         this.handicapCount = handicap;
@@ -111,12 +120,18 @@ public class Game {
      */
     public void switchCurrentPlayer() {
         currentPlayer = (currentPlayer == blackPlayer) ? whitePlayer : blackPlayer;
+        currentPlayerStringProperty.set(currentPlayer.getName() + "'s Turn");
     }
 
     /**
      * Get the current player
      */
     public Player getCurrentPlayer() { return currentPlayer; }
+
+    /**
+     * Get the current player String
+     */
+    public StringProperty getCurrentPlayerStringProperty() { return currentPlayerStringProperty; };
 
     /**
      * Get the current winner of the game.

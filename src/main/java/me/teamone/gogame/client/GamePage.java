@@ -2,6 +2,7 @@ package me.teamone.gogame.client;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import me.teamone.gogame.core.Game;
@@ -26,8 +27,14 @@ public class GamePage extends BorderPane {
     //stores Pass button
     private final Button btnPass;
 
-    //HBox object to display buttons
-    private final HBox hBoxButtons;
+    //stores the output TextField
+    private final TextField txtOutput;
+
+    //stores the White stats
+    private final TextField txtWhiteStats;
+
+    //stores the Black stats
+    private final TextField txtBlackStats;
 
     /*Constructors*/
     //Empty Constructor
@@ -40,13 +47,28 @@ public class GamePage extends BorderPane {
         //instantiate Pass button
         btnPass = new Button("Pass");
 
+        //instantiate the output TextField
+        txtOutput = createTxtOutput(game.getCurrentPlayer());
+
+        //instantiate the stats TextFields
+        txtWhiteStats = createTxtStats(game.getWhitePlayer());
+        txtBlackStats = createTxtStats(game.getBlackPlayer());
+
+
         //place buttons in hBoxButtons
-        hBoxButtons = createButtonBox();
+        //HBox object to display buttons
+        HBox hBoxButtons = createButtonBox();
 
         //place the board in the center
         this.setCenter(game.getBoard());
         //place the button box on the top
         this.setTop(hBoxButtons);
+        //place the output TextField on the bottom
+        this.setBottom(txtOutput);
+        //place the White stats on the left
+        this.setLeft(txtWhiteStats);
+        //place the Black stats on the right
+        this.setRight(txtBlackStats);
 
     }
 
@@ -62,5 +84,41 @@ public class GamePage extends BorderPane {
         //set spacing for buttons
         //hBox.setSpacing(20);
         return hBox;
+    }
+
+    /**
+     * Creates and formats the output TextFields
+     * @param currentPlayer whose current turn
+     * @return TextField with correct format
+     */
+    private TextField createTxtOutput(Player currentPlayer) {
+        //creates a new TextField that is not editable
+        //displays the current player's turn
+        TextField txtOutput = new TextField();
+        txtOutput.setEditable(false);
+
+        //binds the output to the current player's turn
+        txtOutput.textProperty().bind(game.getCurrentPlayerStringProperty());
+
+        //centers text inside textfield
+        txtOutput.setAlignment(Pos.TOP_CENTER);
+
+        return txtOutput;
+    }
+
+    /**
+     * Creates and formats stats TextFields
+     * @param player the player to display the stats of
+     * @return TextField with player stats
+     */
+    private TextField createTxtStats(Player player) {
+        //creates a new TextField that is not editable
+        TextField txtStats = new TextField();
+        txtStats.setEditable(false);
+        //displays the score of the player
+        txtStats.setText(player.getName() + "\n" +
+                        "Score: " + player.getScore() + "\n");
+
+        return txtStats;
     }
 }
