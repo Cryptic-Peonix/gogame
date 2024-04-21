@@ -55,7 +55,7 @@ public class Game {
         this.whitePlayer = wp;
 
         this.currentPlayer = blackPlayer;
-        this.currentPlayerStringProperty.set(currentPlayer.getName() + "'s Turn");
+        this.currentPlayerStringProperty.set(currentPlayer.getName());
 
         this.board = new Board(size, size, this);
         this.handicapCount = handicap;
@@ -120,7 +120,7 @@ public class Game {
      */
     public void switchCurrentPlayer() {
         currentPlayer = (currentPlayer == blackPlayer) ? whitePlayer : blackPlayer;
-        currentPlayerStringProperty.set(currentPlayer.getName() + "'s Turn");
+        currentPlayerStringProperty.set(currentPlayer.getName());
     }
 
     /**

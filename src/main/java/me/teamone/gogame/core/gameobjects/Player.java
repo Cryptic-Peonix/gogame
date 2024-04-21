@@ -1,5 +1,7 @@
 package me.teamone.gogame.core.gameobjects;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import me.teamone.gogame.core.helpers.Team;
 
 /**
@@ -10,6 +12,9 @@ public class Player {
     private final Team team;
     private int score = 0;
 
+    private StringProperty scoreStringProperty = new SimpleStringProperty("");
+
+
     /**
      * Constructor, makes a new player.
      * @param name name str.
@@ -18,6 +23,7 @@ public class Player {
     public Player(String name, Team team) {
         this.name = name;
         this.team = team;
+        this.scoreStringProperty.set(String.valueOf(this.score));
     }
 
     /**
@@ -40,11 +46,14 @@ public class Player {
         return score;
     }
 
+    public StringProperty getScoreStringProperty() { return scoreStringProperty; };
+
     /**
      * Update the score by a value.
      * @param value The amount to update the score by (can be positive or negative).
      */
     public void updateScore(int value) {
         this.score = score + value;
+        this.scoreStringProperty.set(String.valueOf(this.score));
     }
 }

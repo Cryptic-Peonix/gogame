@@ -1,5 +1,8 @@
 package me.teamone.gogame.client;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -8,6 +11,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import me.teamone.gogame.core.Game;
 import me.teamone.gogame.core.gameobjects.Board;
@@ -32,13 +38,13 @@ public class GamePage extends BorderPane {
     private final Button btnSurrender;
 
     //stores the output TextField
-    private final TextField txtOutput;
+    private final VBox vBoxOutput;
 
     //stores the White stats
-    private final TextField txtWhiteStats;
+    private final VBox vBoxWhiteStats;
 
     //stores the Black stats
-    private final TextField txtBlackStats;
+    private final VBox vBoxBlackStats;
 
     /*Constructors*/
     //Empty Constructor
@@ -57,11 +63,11 @@ public class GamePage extends BorderPane {
         btnSurrender.setOnAction(e -> endGame());
 
         //instantiate the output TextField
-        txtOutput = createTxtOutput(game.getCurrentPlayer());
+        vBoxOutput = createVBoxOutput(game.getCurrentPlayer());
 
         //instantiate the stats TextFields
-        txtWhiteStats = createTxtStats(game.getWhitePlayer());
-        txtBlackStats = createTxtStats(game.getBlackPlayer());
+        vBoxWhiteStats = createVBoxStats(game.getWhitePlayer());
+        vBoxBlackStats = createVBoxStats(game.getBlackPlayer());
 
 
         //place buttons in hBoxButtons
@@ -73,11 +79,11 @@ public class GamePage extends BorderPane {
         //place the button box on the top
         this.setTop(hBoxButtons);
         //place the output TextField on the bottom
-        this.setBottom(txtOutput);
+        this.setBottom(vBoxOutput);
         //place the White stats on the left
-        this.setLeft(txtWhiteStats);
+        this.setLeft(vBoxWhiteStats);
         //place the Black stats on the right
-        this.setRight(txtBlackStats);
+        this.setRight(vBoxBlackStats);
 
     }
 
@@ -87,6 +93,7 @@ public class GamePage extends BorderPane {
      */
     private HBox createButtonBox() {
         HBox hBox = new HBox();
+        hBox.setSpacing(20);
         hBox.getChildren().addAll(btnQuit, btnSurrender);
         //align the buttons at the bottom center
         hBox.setAlignment(Pos.BOTTOM_CENTER);
@@ -98,21 +105,30 @@ public class GamePage extends BorderPane {
     /**
      * Creates and formats the output TextFields
      * @param currentPlayer whose current turn
-     * @return TextField with correct format
+     * @return VBox with correct format
      */
-    private TextField createTxtOutput(Player currentPlayer) {
-        //creates a new TextField that is not editable
+    private VBox createVBoxOutput(Player currentPlayer) {
+        //creates a new VBox to store output data
+        VBox vBoxOutput = new VBox();
+
         //displays the current player's turn
-        TextField txtOutput = new TextField();
-        txtOutput.setEditable(false);
+        Text txtTurn = new Text();
+        //binds the current player's to the Text object
+        txtTurn.textProperty().bind(game.getCurrentPlayerStringProperty());
 
-        //binds the output to the current player's turn
-        txtOutput.textProperty().bind(game.getCurrentPlayerStringProperty());
+        //creates a new HBox to display current player's turn
+        HBox hBoxTurn = new HBox(txtTurn, new Text("'s turn"));
+        hBoxTurn.setAlignment(Pos.CENTER);
 
-        //centers text inside textfield
-        txtOutput.setAlignment(Pos.TOP_CENTER);
+        //adds text to VBox
+        vBoxOutput.getChildren().addAll(hBoxTurn);
 
-        return txtOutput;
+        //formats VBox
+        vBoxOutput.setAlignment(Pos.CENTER);
+        vBoxOutput.setSpacing(20);
+        vBoxOutput.setPadding(new Insets(20));
+
+        return vBoxOutput;
     }
 
     /**
@@ -120,14 +136,25 @@ public class GamePage extends BorderPane {
      * @param player the player to display the stats of
      * @return TextField with player stats
      */
-    private TextField createTxtStats(Player player) {
-        //creates a new TextField that is not editable
-        TextField txtStats = new TextField();
-        txtStats.setEditable(false);
-        //displays the score of the player
-        txtStats.setText(player.getName() + "\n" +
-                        "Score: " + player.getScore() + "\n");
-        return txtStats;
+    private VBox createVBoxStats(Player player) {
+        VBox vBoxStats = new VBox();
+        //creates a new Text object to display the player name
+        Text txtPlayerName = new Text(player.getName());
+        //creates a new Text object to display the player score
+        Text txtScore = new Text();
+        txtScore.textProperty().bind(player.getScoreStringProperty());
+
+        //makes a new VBox to display score and then the player's score
+        HBox hBoxScore = new HBox(new Text("Score: "), txtScore);
+
+        //adds text to HBox
+        vBoxStats.getChildren().addAll(txtPlayerName, hBoxScore);
+
+        //format VBox
+        vBoxStats.setSpacing(10);
+        vBoxStats.setPadding(new Insets(10));
+
+        return vBoxStats;
     }
 
     /**
