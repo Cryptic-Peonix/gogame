@@ -122,6 +122,10 @@ public class TitlePage extends StackPane {
         GamePage gamePage = new GamePage();
         Scene scene = new Scene(gamePage);
 
+        // Set the new scene on the stage
         stage.setScene(scene);
+        // Center the stage on the screen
+        stage.centerOnScreen();
+        stage.show();
     }
 }

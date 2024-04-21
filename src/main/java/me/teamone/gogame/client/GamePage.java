@@ -1,10 +1,14 @@
 package me.teamone.gogame.client;
 
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import me.teamone.gogame.core.Game;
 import me.teamone.gogame.core.gameobjects.Board;
 import me.teamone.gogame.core.gameobjects.Player;
@@ -44,6 +48,9 @@ public class GamePage extends BorderPane {
 
         //instantiate Quit button
         btnQuit = new Button("Quit");
+        //runs the quitGame method when the user clicks the quit button
+        btnQuit.setOnAction(e -> quitGame());
+
         //instantiate Pass button
         btnPass = new Button("Pass");
 
@@ -120,5 +127,33 @@ public class GamePage extends BorderPane {
                         "Score: " + player.getScore() + "\n");
 
         return txtStats;
+    }
+
+    /**
+     * Quit game
+     * Called when user presses quit button. Returns to TitlePage
+     */
+    private void quitGame() {
+        Stage stage = (Stage) getScene().getWindow();
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Quit game?");
+        alert.setHeaderText("Are you sure you want to quit?");
+        alert.setContentText("Progress will be lost.");
+
+        //displays a dialog box asking the user if they're sure they want to quit
+        alert.showAndWait().ifPresent(result -> {
+            if (result == ButtonType.OK) {
+                //if the user clicks yes, quits the game to the title page
+                TitlePage titlePage = new TitlePage();
+                Scene scene = new Scene(titlePage);
+
+                // Set the new scene on the stage
+                stage.setScene(scene);
+                // Center the stage on the screen
+                stage.centerOnScreen();
+                stage.show();
+            }
+        });
     }
 }
