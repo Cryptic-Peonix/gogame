@@ -28,8 +28,8 @@ public class GamePage extends BorderPane {
     //stores Quit Button
     private final Button btnQuit;
 
-    //stores Pass button
-    private final Button btnPass;
+    //stores Surrender button
+    private final Button btnSurrender;
 
     //stores the output TextField
     private final TextField txtOutput;
@@ -44,15 +44,17 @@ public class GamePage extends BorderPane {
     //Empty Constructor
     public GamePage() {
         //create new generic board
-        game = new Game(new Player("White", Team.WHITE), new Player("Black", Team.BLACK), 0, 19);
+        game = new Game(new Player("Black", Team.BLACK), new Player("White", Team.WHITE), 0, 19);
 
         //instantiate Quit button
         btnQuit = new Button("Quit");
         //runs the quitGame method when the user clicks the quit button
         btnQuit.setOnAction(e -> quitGame());
 
-        //instantiate Pass button
-        btnPass = new Button("Pass");
+        //instantiate Surrender button
+        btnSurrender = new Button("Surrender");
+        //runs the endGame method when the user clicks the surrender button
+        btnSurrender.setOnAction(e -> endGame());
 
         //instantiate the output TextField
         txtOutput = createTxtOutput(game.getCurrentPlayer());
@@ -85,7 +87,7 @@ public class GamePage extends BorderPane {
      */
     private HBox createButtonBox() {
         HBox hBox = new HBox();
-        hBox.getChildren().addAll(btnQuit, btnPass);
+        hBox.getChildren().addAll(btnQuit, btnSurrender);
         //align the buttons at the bottom center
         hBox.setAlignment(Pos.BOTTOM_CENTER);
         //set spacing for buttons
@@ -125,7 +127,6 @@ public class GamePage extends BorderPane {
         //displays the score of the player
         txtStats.setText(player.getName() + "\n" +
                         "Score: " + player.getScore() + "\n");
-
         return txtStats;
     }
 
@@ -147,6 +148,34 @@ public class GamePage extends BorderPane {
                 //if the user clicks yes, quits the game to the title page
                 TitlePage titlePage = new TitlePage();
                 Scene scene = new Scene(titlePage);
+
+                // Set the new scene on the stage
+                stage.setScene(scene);
+                // Center the stage on the screen
+                stage.centerOnScreen();
+                stage.show();
+            }
+        });
+    }
+
+    /**
+     * Quit game
+     * Called when user presses quit button. Returns to TitlePage
+     */
+    private void endGame() {
+        Stage stage = (Stage) getScene().getWindow();
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Surrender?");
+        alert.setHeaderText("Are you sure you want to surrender?");
+        alert.setContentText("This will end the game.");
+
+        //displays a dialog box asking the user if they're sure they want to quit
+        alert.showAndWait().ifPresent(result -> {
+            if (result == ButtonType.OK) {
+                //if the user clicks yes, quits the game to the title page
+                FinalScorePage finalScorePage = new FinalScorePage(game);
+                Scene scene = new Scene(finalScorePage);
 
                 // Set the new scene on the stage
                 stage.setScene(scene);
