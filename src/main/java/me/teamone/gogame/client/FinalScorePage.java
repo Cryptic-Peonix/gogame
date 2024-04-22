@@ -66,7 +66,7 @@ public class FinalScorePage extends VBox {
         //Quit button to take user back to the title page
         Button btnQuit = new Button("Quit");
         btnQuit.setOnAction(e -> {
-            // Handle quit button action
+            System.exit(0);
         });
 
         //sets text to white and background to black if the winner is black
