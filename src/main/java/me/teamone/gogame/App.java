@@ -14,6 +14,8 @@ import me.teamone.gogame.core.exceptions.isCapturedException;
 import me.teamone.gogame.core.gameobjects.*;
 import me.teamone.gogame.core.helpers.Team;
 
+import java.util.Arrays;
+
 
 /**
  * JavaFX App
@@ -49,13 +51,11 @@ public class App extends Application {
             space1.placeStone(new Stone(Team.WHITE, 2));
             space2.placeStone(new Stone(Team.WHITE, 3));
             GoString string = new GoString(space, space1);
-            string.addSpace(space2);
+            game.addGoString(string);
+            game.attemptAddToString(space2);
             System.out.println(string.toString());
-            System.out.println(string.inGoString(space2));
-            //game.playerTurnCmd(game.getWhitePlayer());
-            //game.playerTurnCmd(game.getBlackPlayer());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
