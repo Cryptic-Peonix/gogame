@@ -34,7 +34,7 @@ public class GoString {
      * @param s2 The second boardSpace.
      * @return True if s2 is adjacent to s1, False if not.
      */
-    private boolean verifySpaces(BoardSpace s1, BoardSpace s2) throws mismatchedTeamsException, NoStoneException {
+    public static boolean verifySpaces(BoardSpace s1, BoardSpace s2) throws mismatchedTeamsException, NoStoneException {
         if (s1.isEmpty() || s2.isEmpty()) {
             throw new NoStoneException("Spaces must have stones to form a string!");
         }
