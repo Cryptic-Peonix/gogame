@@ -163,6 +163,6 @@ public class BoardSpace extends StackPane {
 
     @Override
     public String toString() {
-        return "Team: " + this.captureOwner + ", X: " + this.getX() + ", " + this.getY() + ".";
+        return "(Team: " + this.captureOwner + ", X: " + this.getX() + ", Y:" + this.getY() + ")";
     }
 }
