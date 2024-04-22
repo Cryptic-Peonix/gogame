@@ -160,4 +160,9 @@ public class BoardSpace extends StackPane {
     public void setInString(boolean val) {
         this.inString = val;
     }
+
+    @Override
+    public String toString() {
+        return "Team: " + this.captureOwner + ", X: " + this.getX() + ", " + this.getY() + ".";
+    }
 }
