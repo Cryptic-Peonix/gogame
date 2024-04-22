@@ -102,6 +102,10 @@ public class BoardSpace extends StackPane {
         return stone;
     }
 
+    public boolean hasStone() {
+        return !Objects.isNull(stone);
+    }
+
     /**
      * Get the owner of the space if captured.
      * @return The team who captured the space.
