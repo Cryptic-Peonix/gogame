@@ -1,5 +1,7 @@
 package me.teamone.gogame.core.gameobjects;
 
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import me.teamone.gogame.core.Game;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.SpaceFilledException;
@@ -8,7 +10,7 @@ import me.teamone.gogame.core.exceptions.isCapturedException;
 
 
 import java.util.Arrays;
-import javafx.scene.layout.GridPane;
+
 import me.teamone.gogame.core.helpers.SpaceState;
 
 /**
@@ -26,6 +28,8 @@ public class Board extends GridPane{
     Property to hold the Game the board is apart of
      */
     private final Game game;
+
+    private final String IMAGE_URL = "/images/wood_texture.jpg";
 
     /**
      * Constructor; creates a board object.
@@ -68,6 +72,9 @@ public class Board extends GridPane{
                 //Added by Taran
                 //Populates the board's GridPane with BoardSpace StackPanes
                 this.add(boardSpace, i, j);
+                BackgroundImage myBI = new BackgroundImage(new Image(getClass().getResourceAsStream(IMAGE_URL), 32, 32, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+                        BackgroundSize.DEFAULT);
+                boardSpace.setBackground(new Background(myBI));
 
                 boardSpace.setOnMouseClicked(e -> {
                     try {
