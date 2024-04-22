@@ -40,6 +40,7 @@ public class BoardSpace extends StackPane {
      * The space's state
      */
     private SpaceState state;
+    private boolean inString;
 
     /**
      * Constructor.
@@ -48,6 +49,7 @@ public class BoardSpace extends StackPane {
     public BoardSpace(int[] gridSpace) {
         this.state = SpaceState.OPEN;
         this.gridSpace = gridSpace;
+        this.inString = false;
 
         //add try block
         Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 43, 43, false, false);
@@ -151,4 +153,11 @@ public class BoardSpace extends StackPane {
         return this.state;
     }
 
+    public boolean isInString() {
+        return inString;
+    }
+
+    public void setInString(boolean val) {
+        this.inString = val;
+    }
 }
