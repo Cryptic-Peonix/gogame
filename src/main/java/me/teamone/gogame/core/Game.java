@@ -2,10 +2,7 @@ package me.teamone.gogame.core;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import me.teamone.gogame.core.exceptions.NoStoneException;
-import me.teamone.gogame.core.exceptions.SpaceFilledException;
-import me.teamone.gogame.core.exceptions.StonePlacementException;
-import me.teamone.gogame.core.exceptions.isCapturedException;
+import me.teamone.gogame.core.exceptions.*;
 import me.teamone.gogame.core.gameobjects.*;
 import me.teamone.gogame.core.helpers.Team;
 
@@ -20,9 +17,8 @@ import java.util.Scanner;
 public class Game {
     private final Player blackPlayer;
     private final Player whitePlayer;
-    // ArrayLists for known strings
-    private final ArrayList<GoString> blackStrings;
-    private final ArrayList<GoString> whiteStrings;
+    // string holder hash map
+    private final HashMap<Team, ArrayList<GoString>> goStrings = new HashMap<>();
 
     /*
     Added by Taran
@@ -60,8 +56,11 @@ public class Game {
         this.board = new Board(size, size, this);
         this.handicapCount = handicap;
         this.stoneIDcounter = 0;
-        this.blackStrings = new ArrayList<>();
-        this.whiteStrings = new ArrayList<>();
+        // ArrayLists for known strings
+        ArrayList<GoString> blackStrings = new ArrayList<>();
+        ArrayList<GoString> whiteStrings = new ArrayList<>();
+        goStrings.put(Team.BLACK, blackStrings);
+        goStrings.put(Team.WHITE, whiteStrings);
     }
 
     /**
@@ -102,12 +101,27 @@ public class Game {
      *
      * @param coords The coordinates to place a stone
      */
-    public void playerTurn(int[] coords) throws StonePlacementException, SpaceFilledException, isCapturedException, NoStoneException {
+    public void playerTurn(int[] coords) throws StonePlacementException, SpaceFilledException, isCapturedException, NoStoneException, mismatchedTeamsException, noStringMatchException, StringCreationException {
         Stone stone = new Stone(this.currentPlayer.getTeam(), stoneIDcounter);
         // attempt to place stone
         this.board.placeStone(stone, coords);
         // if nothing goes wrong, increment counter
         this.stoneIDcounter++; // may move to game loop?
+
+        //Check if we need to add the stone to a string
+        BoardSpace space = board.getSpecificSpace(coords[0], coords[1]);
+
+        // see if we can make a new string with the space
+        this.attemptStringCreate(space);
+        // if we cant make a new one, see if we can add it to an existing one
+        if (!space.isInString()) {
+            this.attemptAddToString(space);
+        }
+        //check if any strings are touching and combine them
+        //TODO: Create this method
+        this.printGoStrings();
+
+        //TODO: Check board for captures, and remove pieces and indvalidate spaces for placement as needed
 
         //at the end of the turn, switch current players
         switchCurrentPlayer();
@@ -199,21 +213,93 @@ public class Game {
         return this.handicapCount > 0;
     }
 
-    /**
-     * Checks if a filled board space belongs to a known string.
-     * Only pass board spaces THAT CONTAIN STONES.
-     * @param space The space to check.
-     * @return True if it is in a string, false if not.
-     */
-    public boolean isPartOfString(BoardSpace space) {
-        Team team;
-        try {
-            team = space.getStone().getTeam();
-        } catch (NoStoneException e) {
-            System.out.println(e.getMessage());
-            return false;
+    public void addGoString(GoString string)  {
+        this.goStrings.get(string.getTeam()).add(string);
+    }
+
+    public void attemptAddToString(BoardSpace space) throws noStringMatchException, NoStoneException, mismatchedTeamsException {
+        if (space.isInString()) {
+            throw new RuntimeException("space already exists in string!");
         }
-        return false;
-        //TODO: FINISH ME
+        Team team = space.getStone().getTeam();
+        boolean matched = false;
+        ArrayList<GoString> strings = this.goStrings.get(team);
+        for (GoString s : strings) {
+            for (BoardSpace sp : s.getSpaces()) {
+                boolean canPlace = GoString.verifySpaces(sp, space);
+                if (canPlace) {
+                    s.getSpaces().add(space);
+                    space.setInString(true);
+                    matched = true;
+                    break;
+                }
+                if (matched) {
+                    break;
+                }
+            }
+        }
+        if (!matched) {
+            System.out.println("No String found to add to for stone: " + space.getX() + ", " + space.getY() + "!");
+        }
+    }
+
+    /**
+     * Attempt to create a new string with the space provided. Checks all adjacent spaces and creates one if it can.
+     * @param space The space to attempt to make a string with.
+     */
+    public void attemptStringCreate(BoardSpace space) throws NoStoneException, StringCreationException, mismatchedTeamsException {
+        ArrayList<BoardSpace> adjacentSpaces = getAdjacentSpaces(space);
+        for (BoardSpace sp : adjacentSpaces) {
+            if (sp.isInString() || sp.isCaptured()) {
+                break;
+            }
+            if (sp.hasStone()) {
+                if (sp.getStone().getTeam() == space.getStone().getTeam()) {
+                    GoString string = new GoString(space, sp);
+                    this.goStrings.get(space.getStone().getTeam()).add(string);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Get all adjacent spaces horizontally, vertically, and diagonally to the requested space.
+     * @param space The space to check.
+     * @return An array of the 8 spaces surrounding the requested space.
+     */
+    public ArrayList<BoardSpace> getAdjacentSpaces(BoardSpace space) {
+        ArrayList<BoardSpace> adjacentSpaces = new ArrayList<>();
+        //System.out.println(space.toString());
+        for(int x = -1; x <= 1; x++) {
+            for(int y = -1; y <= 1; y++) {
+                try {
+                    if (!(x == 0 && y == 0)) {
+                        //System.out.println(this.board.getSpecificSpace(space.getX() + x, space.getY() + y));
+                        adjacentSpaces.add(this.board.getSpecificSpace(space.getX() + x, space.getY() + y));
+                    }
+                } catch (ArrayIndexOutOfBoundsException ignored) {
+                }
+            }
+        }
+        return adjacentSpaces;
+    }
+
+    /**
+     * Print all GoStrings on the Board
+     */
+    public void printGoStrings() {
+        ArrayList<GoString> white = this.goStrings.get(Team.WHITE);
+        ArrayList<GoString> black = this.goStrings.get(Team.BLACK);
+
+        System.out.println("Black Strings: ");
+        for (GoString string : black) {
+            System.out.println(string.toString());
+        }
+        System.out.println("");
+        System.out.println("White Strings: ");
+        for (GoString stringw : white) {
+            System.out.println(stringw.toString());
+        }
     }
 }
