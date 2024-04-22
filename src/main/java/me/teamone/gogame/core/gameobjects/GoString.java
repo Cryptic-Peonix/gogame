@@ -24,7 +24,9 @@ public class GoString {
         // set team
         this.team = space1.getStone().getTeam();
         spaces.add(space1);
+        space1.setInString(true);
         spaces.add(space2);
+        space2.setInString(true);
     }
 
     /**
@@ -68,6 +70,7 @@ public class GoString {
         }
         if (valid) {
             this.spaces.add(space);
+            space.setInString(true);
         } else {
             throw new StringCreationException("Boardspace to be added is not adjacent to any spaces!");
         }
