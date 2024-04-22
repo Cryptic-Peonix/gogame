@@ -9,9 +9,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -46,6 +45,8 @@ public class GamePage extends BorderPane {
     //stores the Black stats
     private final VBox vBoxBlackStats;
 
+    private final String IMAGE_URL = "/images/stone.jpg";
+
     /*Constructors*/
     //Empty Constructor
     public GamePage() {
@@ -61,6 +62,10 @@ public class GamePage extends BorderPane {
         btnSurrender = new Button("Surrender");
         //runs the endGame method when the user clicks the surrender button
         btnSurrender.setOnAction(e -> endGame());
+
+        //Background image for other vboxes
+        BackgroundImage myBI = new BackgroundImage(new Image(getClass().getResourceAsStream(IMAGE_URL), 32, 32, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
 
         //instantiate the output TextField
         vBoxOutput = createVBoxOutput(game.getCurrentPlayer());
