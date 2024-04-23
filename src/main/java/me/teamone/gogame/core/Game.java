@@ -122,9 +122,10 @@ public class Game {
         this.printGoStrings();
 
         //calculate scores
-        for (GoString goString : goStrings.get(Team.BLACK)) {
-            System.out.println(goString.isLoop());
-        }
+        //for (GoString goString : goStrings.get(Team.BLACK)) {
+            //System.out.println(goString.isLoop());
+
+        //}
 
         //TODO: Check board for captures, and remove pieces and invalidate spaces for placement as needed
 
@@ -132,6 +133,7 @@ public class Game {
         switchCurrentPlayer();
 
         //this.board.printBoard();
+        System.out.println();
     }
 
     /*
