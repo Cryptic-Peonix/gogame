@@ -23,7 +23,7 @@ public class BoardSpace extends StackPane {
      *
      *Constant for boardspace image url
      */
-    private final String IMAGE_URL = "/images/test_boardspace.png";
+    private final String IMAGE_URL = "/images/boardspace.png";
 
     /**
      * Container for the space's stone.
@@ -54,7 +54,7 @@ public class BoardSpace extends StackPane {
         this.inString = false;
 
         //add try block
-        Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 43, 43, false, false);
+        Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 30, 30, false, false);
 
         ImageView imgView = new ImageView(img);
         this.getChildren().add(imgView);

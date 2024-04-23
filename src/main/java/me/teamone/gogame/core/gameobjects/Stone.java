@@ -21,7 +21,7 @@ public class Stone extends Circle {
         this.team = team;
         this.number = number;
 
-        this.setRadius(15);
+        this.setRadius(10);
         this.setStroke(Color.BLACK);
         this.setFill(team.getColor());
     }
