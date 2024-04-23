@@ -1,12 +1,13 @@
 package me.teamone.gogame.core.gameobjects;
 
+import javafx.scene.layout.BorderPane;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.StringCreationException;
 import me.teamone.gogame.core.exceptions.mismatchedTeamsException;
 import me.teamone.gogame.core.helpers.Team;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * GoString class. Used to represent a "String" in the game of go.
@@ -188,10 +189,6 @@ public class GoString {
      * @return
      */
     public boolean isLoop(BoardSpace currentSpace, BoardSpace firstPriorSpace, BoardSpace secondPriorSpace, ArrayList<BoardSpace> visited) {
-        System.out.println("Current: " + currentSpace.getX() + ", " + currentSpace.getY());
-        if (firstPriorSpace != null) System.out.println("First: " + firstPriorSpace.toString());
-        if (secondPriorSpace != null) System.out.println(" Second: " + secondPriorSpace.toString());
-
 
         //returns true if current position solves the problem
         if (visited.contains(currentSpace)) {
@@ -211,7 +208,6 @@ public class GoString {
             }
         }
 
-        System.out.println("Exiting iteration: " + currentSpace.toString());
         return false;
     }
 
@@ -247,6 +243,29 @@ public class GoString {
         }
 
         return neighbours;
+    }
+
+    public Map<String, Integer> getBoundingBox() {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;;
+        int maxX = Integer.MIN_VALUE;;
+        int maxY = Integer.MIN_VALUE;;
+
+        for (BoardSpace space : spaces) {
+            if (space.getX() < minX) minX = space.getX();
+            if (space.getX() > maxX) maxX = space.getX();
+            if (space.getY() < minY) minY = space.getY();
+            if (space.getY() > maxY) maxY = space.getY();
+        }
+
+        Map<String, Integer> boundingBox = new HashMap<>();
+        boundingBox.put("minX", minX);
+        boundingBox.put("minY", minY);
+        boundingBox.put("maxX", maxX);
+        boundingBox.put("maxY", maxY);
+
+        return boundingBox;
+
     }
 
 }
