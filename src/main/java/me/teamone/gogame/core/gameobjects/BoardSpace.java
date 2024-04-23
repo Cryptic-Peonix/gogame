@@ -1,5 +1,9 @@
 package me.teamone.gogame.core.gameobjects;
 
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.StonePlacementException;
 import me.teamone.gogame.core.helpers.Team;
@@ -81,6 +85,11 @@ public class BoardSpace extends StackPane {
     public void captureSpace(Team team) {
         state = SpaceState.CAPTURED;
         captureOwner = team;
+
+        //temporary
+        Circle circleCaptured = new Circle(15);
+        circleCaptured.setFill(Color.GREEN);
+        this.getChildren().add(circleCaptured);
         stone = null;
     }
 

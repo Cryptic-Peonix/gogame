@@ -117,14 +117,20 @@ public class Game {
         if (!space.isInString()) {
             this.attemptAddToString(space);
         }
+
+        if (space.isInString()) {
+            for (GoString string : goStrings.get(currentPlayer.getTeam())) {
+                if (string.inGoString(space) && string.isLoop()) {
+                    board.setCapturesInsideString(string, currentPlayer.getTeam());
+                }
+            }
+        }
+
         //check if any strings are touching and combine them
         //TODO: Create this method
         this.printGoStrings();
 
-        //calculate scores
-        for (GoString goString : goStrings.get(Team.BLACK)) {
-            System.out.println(goString.isLoop());
-        }
+
 
         //TODO: Check board for captures, and remove pieces and invalidate spaces for placement as needed
 
