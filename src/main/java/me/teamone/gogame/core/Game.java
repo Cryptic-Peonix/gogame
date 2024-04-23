@@ -121,7 +121,12 @@ public class Game {
         //TODO: Create this method
         this.printGoStrings();
 
-        //TODO: Check board for captures, and remove pieces and indvalidate spaces for placement as needed
+        //calculate scores
+        for (GoString goString : goStrings.get(Team.BLACK)) {
+            System.out.println(goString.isLoop());
+        }
+
+        //TODO: Check board for captures, and remove pieces and invalidate spaces for placement as needed
 
         //at the end of the turn, switch current players
         switchCurrentPlayer();
@@ -248,7 +253,7 @@ public class Game {
      * @param space The space to attempt to make a string with.
      */
     public void attemptStringCreate(BoardSpace space) throws NoStoneException, StringCreationException, mismatchedTeamsException {
-        ArrayList<BoardSpace> adjacentSpaces = getAdjacentSpaces(space);
+        ArrayList<BoardSpace> adjacentSpaces = board.getAdjacentSpaces(space);
         for (BoardSpace sp : adjacentSpaces) {
             if (sp.isInString() || sp.isCaptured()) {
                 break;
@@ -263,27 +268,7 @@ public class Game {
         }
     }
 
-    /**
-     * Get all adjacent spaces horizontally, vertically, and diagonally to the requested space.
-     * @param space The space to check.
-     * @return An array of the 8 spaces surrounding the requested space.
-     */
-    public ArrayList<BoardSpace> getAdjacentSpaces(BoardSpace space) {
-        ArrayList<BoardSpace> adjacentSpaces = new ArrayList<>();
-        //System.out.println(space.toString());
-        for(int x = -1; x <= 1; x++) {
-            for(int y = -1; y <= 1; y++) {
-                try {
-                    if (!(x == 0 && y == 0)) {
-                        //System.out.println(this.board.getSpecificSpace(space.getX() + x, space.getY() + y));
-                        adjacentSpaces.add(this.board.getSpecificSpace(space.getX() + x, space.getY() + y));
-                    }
-                } catch (ArrayIndexOutOfBoundsException ignored) {
-                }
-            }
-        }
-        return adjacentSpaces;
-    }
+
 
     /**
      * Print all GoStrings on the Board

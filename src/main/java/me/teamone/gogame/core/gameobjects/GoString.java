@@ -5,6 +5,7 @@ import me.teamone.gogame.core.exceptions.StringCreationException;
 import me.teamone.gogame.core.exceptions.mismatchedTeamsException;
 import me.teamone.gogame.core.helpers.Team;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -139,4 +140,85 @@ public class GoString {
         result.append(".");
         return result.toString();
     }
+
+    /*public boolean isConnected() {
+        BoardSpace firstSpace = spaces.get(0);
+        BoardSpace destinationSpace = spaces.get(spaces.size() - 1);
+        ArrayList<BoardSpace> visited = new ArrayList<>();
+
+        if (spaces.size() < 4) return false;
+
+        if (isConnected(firstSpace, destinationSpace, firstSpace, visited)) {
+            return isConnected(destinationSpace, firstSpace, destinationSpace, visited);
+        }
+
+        return false;
+    }*/
+
+    /**
+     * Checks if a GoString is a connected loop
+     * @param firstSpace the first space, where the loop is attempting to get back to
+     * @param currentSpace the current space the loop is on
+     * @param visited an array containing all visited BoardSpaces
+     * @return
+     *//*
+    public boolean isConnected(BoardSpace firstSpace, BoardSpace destinationSpace, BoardSpace currentSpace, ArrayList<BoardSpace> visited) {
+        if (currentSpace == destinationSpace) {
+            return true;
+        }
+
+        visited.add(currentSpace);
+
+        for (BoardSpace space : this.getSpaces()) {
+            if (space != currentSpace && currentSpace.isAdjacent(space)) {
+                if (!visited.contains(space)) {
+                    if (isConnected(firstSpace, destinationSpace, space, visited)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        visited.remove(currentSpace);
+        return false;
+    }*/
+
+    public boolean isLoop(BoardSpace currentSpace, BoardSpace priorSpace, ArrayList<BoardSpace> visited) {
+        //returns true if current position solves the problem
+        if (visited.contains(currentSpace)) {
+            return true;
+        }
+
+        //this space has now been visited
+        visited.add(currentSpace);
+
+        //Else check which options we have at the current position and check if one of the neighbors is a solution
+        for (BoardSpace nextSpace : getNeighbours(currentSpace)) {
+            if (priorSpace == null || !nextSpace.equals(priorSpace)) {
+                if (isLoop(nextSpace, currentSpace, visited)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isLoop() {
+        return isLoop(spaces.get(0), null, new ArrayList<BoardSpace>());
+    }
+
+    //returns neighbouring spaces to given space in GoString
+    public ArrayList<BoardSpace> getNeighbours(BoardSpace firstSpace) {
+        ArrayList<BoardSpace> neighbours = new ArrayList<>();
+
+        for (BoardSpace space : spaces) {
+            if (firstSpace.isAdjacent(space)) {
+                neighbours.add(space);
+            }
+        }
+
+        return neighbours;
+    }
+
 }

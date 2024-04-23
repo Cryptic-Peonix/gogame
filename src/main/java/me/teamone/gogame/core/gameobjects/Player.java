@@ -56,4 +56,13 @@ public class Player {
         this.score = score + value;
         this.scoreStringProperty.set(String.valueOf(this.score));
     }
+
+    /**
+     * Set the score to a value
+     * @param value The amount to set the score to
+     */
+    public void setScore(int value) {
+        this.score = value;
+        this.scoreStringProperty.set(String.valueOf(score));
+    }
 }

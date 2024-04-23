@@ -9,9 +9,11 @@ import me.teamone.gogame.core.exceptions.StonePlacementException;
 import me.teamone.gogame.core.exceptions.isCapturedException;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import me.teamone.gogame.core.helpers.SpaceState;
+import me.teamone.gogame.core.helpers.Team;
 
 /**
  * Class to represent the game board.
@@ -126,6 +128,16 @@ public class Board extends GridPane{
         return this.board[x][y];
     }
 
+    /**
+     * Checks if a specific space is on the board based on given x and y pos
+     * @param x the x position
+     * @param y the y postion
+     * @return true if the space is in the board, false if it is not
+     */
+    private boolean isInBoard(int x, int y) {
+        return x >= 0 && x < (xSize - 1) && y >= 0 && y < (ySize - 1);
+    }
+
     public int getxSize() {
         return this.xSize;
     }
@@ -143,4 +155,56 @@ public class Board extends GridPane{
             System.out.println("Row #" + i + ":" + Arrays.toString(this.board[i]));
         }
     }
+
+
+    /**
+     * Get all adjacent spaces horizontally, vertically, and diagonally to the requested space.
+     * @param space The space to check.
+     * @return An array of the 8 spaces surrounding the requested space.
+     */
+    public ArrayList<BoardSpace> getAdjacentSpaces(BoardSpace space) {
+        ArrayList<BoardSpace> adjacentSpaces = new ArrayList<>();
+        //System.out.println(space.toString());
+        for(int x = -1; x <= 1; x++) {
+            for(int y = -1; y <= 1; y++) {
+                try {
+                    if (!(x == 0 && y == 0)) {
+                        //System.out.println(this.board.getSpecificSpace(space.getX() + x, space.getY() + y));
+                        adjacentSpaces.add(getSpecificSpace(space.getX() + x, space.getY() + y));
+                    }
+                } catch (ArrayIndexOutOfBoundsException ignored) {
+                }
+            }
+        }
+        return adjacentSpaces;
+    }
+
+    /**
+     * Get all adjacent spaces to a GoString
+     * @param string the GoString to check
+     * @return An array of the spaces surrounding the requested space.
+     */
+    private ArrayList<BoardSpace> getAdjacentSpaces(GoString string) {
+        ArrayList<BoardSpace> adjacentSpaces = new ArrayList<>();
+        for (BoardSpace space : string.getSpaces()) {
+            int x = space.getX();
+            int y = space.getY();
+            if (isInBoard(x + 1, y)) {
+                adjacentSpaces.add(getSpecificSpace(x + 1, y));
+            }
+            if (isInBoard(x - 1, y)) {
+                adjacentSpaces.add(getSpecificSpace(x - 1, y));
+            }
+            if (isInBoard(x, y + 1)) {
+                adjacentSpaces.add(getSpecificSpace(x, y + 1));
+            }
+            if (isInBoard(x, y - 1)) {
+                adjacentSpaces.add(getSpecificSpace(x, y - 1));
+            }
+        }
+        return adjacentSpaces;
+    }
+
+
 }
+

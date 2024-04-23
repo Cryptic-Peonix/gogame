@@ -11,6 +11,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import static java.lang.Math.abs;
+
 /**
  * Class for representing a space on the board.
  */
@@ -168,5 +170,17 @@ public class BoardSpace extends StackPane {
     @Override
     public String toString() {
         return "(Team: " + this.captureOwner + ", X: " + this.getX() + ", Y:" + this.getY() + ")";
+    }
+
+    /**
+     * Checks if given space is adjacent to this BoardSpace
+     * @param space
+     * @return
+     */
+    public boolean isAdjacent(BoardSpace space) {
+        if (abs(this.getX() - space.getX()) == 1 || abs(this.getY() - space.getY()) == 1) {
+            return true;
+        }
+        else return false;
     }
 }
