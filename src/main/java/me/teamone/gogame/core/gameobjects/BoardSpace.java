@@ -60,8 +60,12 @@ public class BoardSpace extends StackPane {
         //add try block
         Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 30, 30, false, false);
 
+        //open circle (blue) for testing
+        Circle circleOpen = new Circle(5);
+        circleOpen.setFill(Color.SKYBLUE);
+
         ImageView imgView = new ImageView(img);
-        this.getChildren().add(imgView);
+        this.getChildren().addAll(imgView, circleOpen);
     }
 
     /**
@@ -87,7 +91,7 @@ public class BoardSpace extends StackPane {
         captureOwner = team;
 
         //temporary
-        Circle circleCaptured = new Circle(15);
+        Circle circleCaptured = new Circle(5);
         circleCaptured.setFill(Color.GREEN);
         this.getChildren().add(circleCaptured);
         stone = null;
@@ -99,6 +103,10 @@ public class BoardSpace extends StackPane {
     public void clearSpace() {
         this.stone = null;
         this.state = SpaceState.OPEN;
+        //open circle (blue) for testing
+        Circle circleOpen = new Circle(5);
+        circleOpen.setFill(Color.SKYBLUE);
+        getChildren().add(circleOpen);
     }
 
     /**
