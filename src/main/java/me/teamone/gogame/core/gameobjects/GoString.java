@@ -1,16 +1,14 @@
 package me.teamone.gogame.core.gameobjects;
 
-import javafx.scene.layout.BorderPane;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.StringCreationException;
 import me.teamone.gogame.core.exceptions.mismatchedTeamsException;
 import me.teamone.gogame.core.helpers.Team;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
-import java.util.Stack;
-import java.util.*;
 
 /**
  * GoString class. Used to represent a "String" in the game of go.
@@ -133,6 +131,23 @@ public class GoString {
      */
     public ArrayList<BoardSpace> getSpaces() {
         return spaces;
+    }
+
+    /**
+     * Adds the requested goStrings pieces to this one. DOES NOT PERFORM VERIFICATION CHECKS, CALL ONLY WHEN YOU KNOW
+     * THEY BORDER. Does not delete the food string, you must call that yourself by setting it to null.
+     * @param food The GoString to eat.
+     */
+    public void consume(GoString food) {
+        this.spaces.addAll(food.getSpaces());
+    }
+
+    public void wipeSpaces() {
+        this.spaces.clear();
+    }
+
+    public boolean isEmpty() {
+        return this.spaces.isEmpty();
     }
 
     @Override

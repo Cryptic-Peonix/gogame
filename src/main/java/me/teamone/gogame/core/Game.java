@@ -6,7 +6,6 @@ import me.teamone.gogame.core.exceptions.*;
 import me.teamone.gogame.core.gameobjects.*;
 import me.teamone.gogame.core.helpers.Team;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -113,6 +112,15 @@ public class Game {
 
         // see if we can make a new string with the space
         this.attemptStringCreate(space);
+        // check if this space bridges one or more strings
+        //TODO: FIX BUG WHERE ONE SPACE GETS LEFT OUT ON PLACEMENT BETWEEN STIRNG AND STONE
+        ArrayList<Integer> uniqueAdjacentGoStringIndexes = getUniqueAdjacentStringIndexes(space);
+        if (uniqueAdjacentGoStringIndexes.size() > 1) {
+            // bypass checking cause we already did it
+            space.setInString(true);
+            this.goStrings.get(this.currentPlayer.getTeam()).get(uniqueAdjacentGoStringIndexes.get(0)).addSpace(space);
+            attemptStringMerge(uniqueAdjacentGoStringIndexes, this.currentPlayer.getTeam());
+        }
         // if we cant make a new one, see if we can add it to an existing one
         if (!space.isInString()) {
             this.attemptAddToString(space);
@@ -145,6 +153,39 @@ public class Game {
 
         //this.board.printBoard();
         System.out.println();
+    }
+
+    public ArrayList<Integer> getUniqueAdjacentStringIndexes(BoardSpace space) throws NoStoneException, mismatchedTeamsException {
+        ArrayList<Integer> indexes = new ArrayList<>();
+        for (GoString str : this.goStrings.get(space.getStone().getTeam())) {
+            for (BoardSpace s : str.getSpaces()) {
+                if (GoString.verifySpaces(space, s)) {
+                    indexes.add(this.goStrings.get(space.getStone().getTeam()).indexOf(str));
+                    break;
+                }
+            }
+        }
+        return indexes;
+    }
+
+    public void attemptStringMerge(ArrayList<Integer> stringIndexes, Team team) {
+        ArrayList<GoString> strings = new ArrayList<>();
+        for (int i : stringIndexes) {
+            GoString string = this.goStrings.get(team).get(i);
+            strings.add(string);
+        }
+        if (strings.size() == 2) {
+            strings.get(0).consume(strings.get(1));
+            this.goStrings.get(team).remove(strings.get(1));
+        } else {
+            strings.get(0).consume(strings.get(1));
+            this.goStrings.get(team).remove(strings.get(1));
+            stringIndexes.remove(1);
+            for (int j = 1; j < stringIndexes.size(); j++) {
+                stringIndexes.set(j, stringIndexes.get(j) - 1);
+            }
+            attemptStringMerge(stringIndexes, team); // recursive until we get down to 2
+        }
     }
 
     /*
@@ -280,6 +321,8 @@ public class Game {
             }
         }
     }
+
+
 
 
 
