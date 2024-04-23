@@ -155,13 +155,7 @@ public class GoString {
         return false;
     }*/
 
-    /**
-     * Checks if a GoString is a connected loop
-     * @param firstSpace the first space, where the loop is attempting to get back to
-     * @param currentSpace the current space the loop is on
-     * @param visited an array containing all visited BoardSpaces
-     * @return
-     *//*
+    /*
     public boolean isConnected(BoardSpace firstSpace, BoardSpace destinationSpace, BoardSpace currentSpace, ArrayList<BoardSpace> visited) {
         if (currentSpace == destinationSpace) {
             return true;
@@ -184,6 +178,8 @@ public class GoString {
     }*/
 
     public boolean isLoop(BoardSpace currentSpace, BoardSpace priorSpace, ArrayList<BoardSpace> visited) {
+        System.out.println("Current: " + currentSpace.getX() + ", " + currentSpace.getY());
+
         //returns true if current position solves the problem
         if (visited.contains(currentSpace)) {
             return true;
@@ -194,7 +190,11 @@ public class GoString {
 
         //Else check which options we have at the current position and check if one of the neighbors is a solution
         for (BoardSpace nextSpace : getNeighbours(currentSpace)) {
-            if (priorSpace == null || !nextSpace.equals(priorSpace)) {
+            if (!nextSpace.equals(priorSpace)) {
+                System.out.println("Next: " + nextSpace.getX() + nextSpace.getY());
+
+                if(priorSpace != null) System.out.println("Prior: " + priorSpace.getX() + priorSpace.getY());
+
                 if (isLoop(nextSpace, currentSpace, visited)) {
                     return true;
                 }
@@ -213,8 +213,16 @@ public class GoString {
         ArrayList<BoardSpace> neighbours = new ArrayList<>();
 
         for (BoardSpace space : spaces) {
-            if (firstSpace.isAdjacent(space)) {
-                neighbours.add(space);
+            try {
+                if (verifySpaces(firstSpace, space)) {
+                    neighbours.add(space);
+                }
+            }
+            catch (NoStoneException e) {
+                System.out.println("No stone");
+            }
+            catch (mismatchedTeamsException e) {
+                System.out.println("Mismatched teams");
             }
         }
 
