@@ -171,16 +171,4 @@ public class BoardSpace extends StackPane {
     public String toString() {
         return "(Team: " + this.captureOwner + ", X: " + this.getX() + ", Y:" + this.getY() + ")";
     }
-
-    /**
-     * Checks if given space is adjacent to this BoardSpace
-     * @param space
-     * @return
-     */
-    public boolean isAdjacent(BoardSpace space) {
-        if (abs(this.getX() - space.getX()) == 1 || abs(this.getY() - space.getY()) == 1) {
-            return true;
-        }
-        else return false;
-    }
 }

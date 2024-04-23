@@ -205,6 +205,32 @@ public class Board extends GridPane{
         return adjacentSpaces;
     }
 
+    public void captureSurroundedSpaces(Team team, GoString string) {
+        for (BoardSpace space : string.getSpaces()) {
+            int x = space.getX() + 1;
+            int y = space.getY() + 1;
+            // Capture the four adjacent spaces
+            captureSurroundedSpace(x + 1, y, team);
+            captureSurroundedSpace(x - 1, y, team);
+            captureSurroundedSpace(x, y + 1, team);
+            captureSurroundedSpace(x, y - 1, team);
+        }
+    }
+
+    private void captureSurroundedSpace(int x, int y, Team team) {
+        // Check if the space is within the board and is empty
+        if (x >= 0 && x < xSize && y >= 0 && y < ySize && getSpecificSpace(x, y).isEmpty()) {
+            // Change the ownership of the empty space to the specified team
+            getSpecificSpace(x, y).captureSpace(team);
+            // Recursively capture the connected empty spaces
+            captureSurroundedSpace(x + 1, y, team);
+            captureSurroundedSpace(x - 1, y, team);
+            captureSurroundedSpace(x, y + 1, team);
+            captureSurroundedSpace(x, y - 1, team);
+        }
+    }
+
+
 
 }
 

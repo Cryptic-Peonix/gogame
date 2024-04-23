@@ -177,8 +177,21 @@ public class GoString {
         return false;
     }*/
 
-    public boolean isLoop(BoardSpace currentSpace, BoardSpace priorSpace, ArrayList<BoardSpace> visited) {
+    /**
+     * Checks if a GoString contains a loop. This is a recursive method
+     * as it performs the isLoop check on each stone neighbouring the
+     * previous stone the stone is neighbours with a stone that has already
+     * been visited.
+     * @param currentSpace The current space to check
+     * @param firstPriorSpace The space previous to
+     * @param visited
+     * @return
+     */
+    public boolean isLoop(BoardSpace currentSpace, BoardSpace firstPriorSpace, BoardSpace secondPriorSpace, ArrayList<BoardSpace> visited) {
         System.out.println("Current: " + currentSpace.getX() + ", " + currentSpace.getY());
+        if (firstPriorSpace != null) System.out.println("First: " + firstPriorSpace.toString());
+        if (secondPriorSpace != null) System.out.println(" Second: " + secondPriorSpace.toString());
+
 
         //returns true if current position solves the problem
         if (visited.contains(currentSpace)) {
@@ -190,39 +203,46 @@ public class GoString {
 
         //Else check which options we have at the current position and check if one of the neighbors is a solution
         for (BoardSpace nextSpace : getNeighbours(currentSpace)) {
-            if (!nextSpace.equals(priorSpace)) {
-                System.out.println("Next: " + nextSpace.getX() + nextSpace.getY());
-
-                if(priorSpace != null) System.out.println("Prior: " + priorSpace.getX() + priorSpace.getY());
-
-                if (isLoop(nextSpace, currentSpace, visited)) {
+            System.out.println("nextSpace: " + nextSpace.toString());
+            if (!nextSpace.equals(firstPriorSpace) && !nextSpace.equals(secondPriorSpace)) {
+                if (isLoop(nextSpace, currentSpace, firstPriorSpace, visited)) {
                     return true;
                 }
             }
         }
 
+        System.out.println("Exiting iteration: " + currentSpace.toString());
         return false;
     }
 
+    /**
+     * isLoop() function to call without parameters. Automatically starts on the first
+     * BoardSpace in the GoString ArrayList
+     * @return true if the GoString contains a closed loop, false if it is just a line
+     */
     public boolean isLoop() {
-        return isLoop(spaces.get(0), null, new ArrayList<BoardSpace>());
+        return isLoop(spaces.get(0), null, null, new ArrayList<BoardSpace>());
     }
 
-    //returns neighbouring spaces to given space in GoString
+    /**
+     * returns the neighbouring BoardSpaces of a given space
+     * @param firstSpace the space to check the neighbours of
+     * @return an ArrayList containing the BoardSpace neighbours
+     */
     public ArrayList<BoardSpace> getNeighbours(BoardSpace firstSpace) {
         ArrayList<BoardSpace> neighbours = new ArrayList<>();
 
         for (BoardSpace space : spaces) {
-            try {
-                if (verifySpaces(firstSpace, space)) {
-                    neighbours.add(space);
+            if (firstSpace != space) {
+                try {
+                    if (verifySpaces(firstSpace, space)) {
+                        neighbours.add(space);
+                    }
+                } catch (NoStoneException e) {
+                    System.out.println("No stone");
+                } catch (mismatchedTeamsException e) {
+                    System.out.println("Mismatched teams");
                 }
-            }
-            catch (NoStoneException e) {
-                System.out.println("No stone");
-            }
-            catch (mismatchedTeamsException e) {
-                System.out.println("Mismatched teams");
             }
         }
 
