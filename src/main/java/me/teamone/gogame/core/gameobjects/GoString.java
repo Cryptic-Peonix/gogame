@@ -1,5 +1,6 @@
 package me.teamone.gogame.core.gameobjects;
 
+import javafx.scene.layout.BorderPane;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.StringCreationException;
 import me.teamone.gogame.core.exceptions.mismatchedTeamsException;
@@ -9,6 +10,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
+import java.util.*;
 
 /**
  * GoString class. Used to represent a "String" in the game of go.
@@ -179,8 +181,17 @@ public class GoString {
         return false;
     }*/
 
-    public boolean isLoop(BoardSpace currentSpace, BoardSpace priorSpace, ArrayList<BoardSpace> visited) {
-        System.out.println("Current: " + currentSpace.getX() + ", " + currentSpace.getY());
+    /**
+     * Checks if a GoString contains a loop. This is a recursive method
+     * as it performs the isLoop check on each stone neighbouring the
+     * previous stone the stone is neighbours with a stone that has already
+     * been visited.
+     * @param currentSpace The current space to check
+     * @param firstPriorSpace The space previous to
+     * @param visited
+     * @return
+     */
+    public boolean isLoop(BoardSpace currentSpace, BoardSpace firstPriorSpace, BoardSpace secondPriorSpace, ArrayList<BoardSpace> visited) {
 
         //returns true if current position solves the problem
         if (visited.contains(currentSpace)) {
@@ -192,12 +203,9 @@ public class GoString {
 
         //Else check which options we have at the current position and check if one of the neighbors is a solution
         for (BoardSpace nextSpace : getNeighbours(currentSpace)) {
-            if (!nextSpace.equals(priorSpace)) {
-                //System.out.println("Next: " + nextSpace.getX() + nextSpace.getY());
-
-                //if(priorSpace != null) System.out.println("Prior: " + priorSpace.getX() + priorSpace.getY());
-
-                if (isLoop(nextSpace, currentSpace, visited)) {
+            System.out.println("nextSpace: " + nextSpace.toString());
+            if (!nextSpace.equals(firstPriorSpace) && !nextSpace.equals(secondPriorSpace)) {
+                if (isLoop(nextSpace, currentSpace, firstPriorSpace, visited)) {
                     return true;
                 }
             }
@@ -206,6 +214,11 @@ public class GoString {
         return false;
     }
 
+    /**
+     * isLoop() function to call without parameters. Automatically starts on the first
+     * BoardSpace in the GoString ArrayList
+     * @return true if the GoString contains a closed loop, false if it is just a line
+     */
     public boolean isLoop() {
         return isLoop(spaces.get(0), null, new ArrayList<BoardSpace>());
     }
@@ -318,20 +331,43 @@ public class GoString {
         ArrayList<BoardSpace> neighbours = new ArrayList<>();
 
         for (BoardSpace space : spaces) {
-            try {
-                if (verifySpaces(firstSpace, space)) {
-                    neighbours.add(space);
+            if (firstSpace != space) {
+                try {
+                    if (verifySpaces(firstSpace, space)) {
+                        neighbours.add(space);
+                    }
+                } catch (NoStoneException e) {
+                    System.out.println("No stone");
+                } catch (mismatchedTeamsException e) {
+                    System.out.println("Mismatched teams");
                 }
-            }
-            catch (NoStoneException e) {
-                System.out.println("No stone");
-            }
-            catch (mismatchedTeamsException e) {
-                System.out.println("Mismatched teams");
             }
         }
 
         return neighbours;
+    }
+
+    public Map<String, Integer> getBoundingBox() {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;;
+        int maxX = Integer.MIN_VALUE;;
+        int maxY = Integer.MIN_VALUE;;
+
+        for (BoardSpace space : spaces) {
+            if (space.getX() < minX) minX = space.getX();
+            if (space.getX() > maxX) maxX = space.getX();
+            if (space.getY() < minY) minY = space.getY();
+            if (space.getY() > maxY) maxY = space.getY();
+        }
+
+        Map<String, Integer> boundingBox = new HashMap<>();
+        boundingBox.put("minX", minX);
+        boundingBox.put("minY", minY);
+        boundingBox.put("maxX", maxX);
+        boundingBox.put("maxY", maxY);
+
+        return boundingBox;
+
     }
 
 }

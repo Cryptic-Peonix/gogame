@@ -9,8 +9,7 @@ import me.teamone.gogame.core.exceptions.StonePlacementException;
 import me.teamone.gogame.core.exceptions.isCapturedException;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import me.teamone.gogame.core.helpers.SpaceState;
 import me.teamone.gogame.core.helpers.Team;
@@ -205,32 +204,98 @@ public class Board extends GridPane{
         return adjacentSpaces;
     }
 
-    public void captureSurroundedSpaces(Team team, GoString string) {
-        for (BoardSpace space : string.getSpaces()) {
-            int x = space.getX() + 1;
-            int y = space.getY() + 1;
-            // Capture the four adjacent spaces
-            captureSurroundedSpace(x + 1, y, team);
-            captureSurroundedSpace(x - 1, y, team);
-            captureSurroundedSpace(x, y + 1, team);
-            captureSurroundedSpace(x, y - 1, team);
+    public void setCapturesInsideString(GoString string, Team team) {
+        List<BoardSpace> coordinatesInside = new ArrayList<>();
+        // Find the bounding box of the shape
+        Map<String, Integer> boundingBox = string.getBoundingBox();
+        int minX = boundingBox.get("minX");
+        int minY = boundingBox.get("minY");
+        int maxX = boundingBox.get("maxX");
+        int maxY = boundingBox.get("maxY");
+
+        // Iterate over all points in the bounding box, ignoring
+        //the edges of the bounding box
+        for (int x = minX + 1; x <= maxX - 1; x++) {
+            for (int y = minY + 1; y <= maxY - 1; y++) {
+                System.out.print(x + ", " + y);
+                if (isInside(x, y, string, team)) {
+                    getSpecificSpace(x, y).captureSpace(team);
+                    System.out.println(" is true");
+                }
+                else {
+                    System.out.println();
+                }
+            }
         }
     }
 
-    private void captureSurroundedSpace(int x, int y, Team team) {
-        // Check if the space is within the board and is empty
-        if (x >= 0 && x < xSize && y >= 0 && y < ySize && getSpecificSpace(x, y).isEmpty()) {
-            // Change the ownership of the empty space to the specified team
-            getSpecificSpace(x, y).captureSpace(team);
-            // Recursively capture the connected empty spaces
-            captureSurroundedSpace(x + 1, y, team);
-            captureSurroundedSpace(x - 1, y, team);
-            captureSurroundedSpace(x, y + 1, team);
-            captureSurroundedSpace(x, y - 1, team);
+    /**
+     * Checks if a point (x, y) is inside the polygon defined by the outline of a GoString.
+     * Uses the ray-casting algorithm to determine if the point is inside the polygon.
+     *
+     * @param x      The x-coordinate of the point to check.
+     * @param y      The y-coordinate of the point to check.
+     * @param string The GoString containing the outline of the polygon.
+     * @return true if the point is inside the polygon, false otherwise.
+     */
+    private boolean isInside(int x, int y, GoString string, Team team) {
+        //if the space is occupied by the same team's stone, it is not inside the string
+        if (getSpecificSpace(x, y).getCaptureOwner() != null && getSpecificSpace(x, y).getCaptureOwner().equals(team)) return false;
+
+        // Get the list of BoardSpaces that form the GoString in the same x and y positions as the space
+        ArrayList<BoardSpace> xSpaces = new ArrayList<>();
+        ArrayList<BoardSpace> ySpaces = new ArrayList<>();
+
+        for(BoardSpace space : string.getSpaces()) {
+            //checks every BoardSpace in the string on the same x-axis to the right of given coords
+            if (space.getX() == x && space.getY() > y) {
+                xSpaces.add(space);
+            }
+            //checks every BoardSpace in the string on the same y-axis below given coords
+            if (space.getY() == y && space.getX() > x) {
+                ySpaces.add(space);
+            }
         }
+
+        // Sort the xSpaces based on the getY() method
+        xSpaces.sort(Comparator.comparingInt(BoardSpace::getY));
+        // Sort the ySpaces based on the getX() method
+        ySpaces.sort(Comparator.comparingInt(BoardSpace::getX));
+
+        //remove spaces that are in a direct line on the x-axis
+        for (int i = xSpaces.size() - 1; i > 0; i--) {
+            if ((xSpaces.get(i).getY() - xSpaces.get(i-1).getY()) == 1) {
+                //if the difference in Y values between the two spaces is 1
+                //then they are next to each other, and one of them needs to be removed.
+                xSpaces.remove(i-1);
+            }
+        }
+
+        //remove spaces that are in a direct line on the y-axis
+        for (int i = ySpaces.size() - 1; i > 0; i--) {
+            if ((ySpaces.get(i).getX() - ySpaces.get(i-1).getX()) == 1) {
+                //if the difference in X values between the two spaces is 1
+                //then they are next to each other, and one of them needs to be removed.
+                ySpaces.remove(i-1);
+            }
+        }
+
+        //count how many spaces in arraylists
+        int xCount = xSpaces.size();
+        int yCount = ySpaces.size();
+
+        System.out.println("xCount" + xCount + " yCount" + yCount);
+
+        //if the count is even, then the space is outside the string
+        if (xCount % 2 == 0 && yCount % 2 == 0) {
+            return false;
+        }
+        //if the count is odd, then the space is inside the string
+        else {
+            return true;
+        }
+
     }
-
-
 
 }
 
