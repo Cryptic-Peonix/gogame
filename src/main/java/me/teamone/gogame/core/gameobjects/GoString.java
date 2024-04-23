@@ -141,7 +141,7 @@ public class GoString {
         for (BoardSpace s : this.spaces) {
             result.append("(").append(s.getX()).append(", ").append(s.getY()).append("), ");
         }
-        result.append("\n isLoop: ").append(isLoopV2());
+        //result.append("\n isLoop: ").append(isLoopV2());
         return result.toString();
     }
 
@@ -227,7 +227,7 @@ public class GoString {
         ArrayList<BoardSpace> previousSpaces = new ArrayList<>();
         Random random = new Random();
         // get random space in string
-        BoardSpace seed = this.spaces.get(random.nextInt(this.spaces.size()));
+        BoardSpace seed = this.spaces.get(this.spaces.size() - 1); // get last stone added to GoString
         System.out.println(this.team + " seed: " + seed);
         BoardSpace currentSpace = seed;
         while (true) {
@@ -235,7 +235,7 @@ public class GoString {
             attemptPrevTrim(previousSpaces); // trim previous spaces to maintain a size of 2
             ArrayList<BoardSpace> neighbors = getNeighbours(currentSpace);
             System.out.println("N: " + neighbors);
-            if (neighbors.size() < 2) {
+            if (neighbors.isEmpty()) {
                 System.out.println("not enough neighbors surrounding: " + currentSpace);
                 return false; // early escape, we have hit an edge, so it is def not a loop
             }
