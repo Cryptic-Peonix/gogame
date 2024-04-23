@@ -220,7 +220,7 @@ public class GoString {
      * @return true if the GoString contains a closed loop, false if it is just a line
      */
     public boolean isLoop() {
-        return isLoop(spaces.get(0), null, new ArrayList<BoardSpace>());
+        return isLoop(spaces.get(0), null, null, new ArrayList<BoardSpace>());
     }
 
     public boolean isLoopV2() {
