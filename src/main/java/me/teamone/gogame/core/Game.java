@@ -120,7 +120,8 @@ public class Game {
 
         if (space.isInString()) {
             for (GoString string : goStrings.get(currentPlayer.getTeam())) {
-                if (string.inGoString(space) && string.isLoop()) {
+                if (string.inGoString(space) && string.isLoopV2()) {
+                    System.out.println("should capture");
                     board.setCapturesInsideString(string, currentPlayer.getTeam());
                 }
             }
