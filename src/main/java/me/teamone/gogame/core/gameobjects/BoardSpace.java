@@ -64,11 +64,11 @@ public class BoardSpace extends StackPane {
         Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 30, 30, false, false);
 
         //open circle (blue) for testing
-        Circle circleOpen = new Circle(5);
-        circleOpen.setFill(Color.SKYBLUE);
+        /*Circle circleOpen = new Circle(5);
+        circleOpen.setFill(Color.SKYBLUE);*/
 
         ImageView imgView = new ImageView(img);
-        this.getChildren().addAll(imgView, circleOpen);
+        this.getChildren().addAll(imgView);
     }
 
     /**
@@ -111,9 +111,9 @@ public class BoardSpace extends StackPane {
         this.stone = null;
         this.state = SpaceState.OPEN;
         //open circle (blue) for testing
-        Circle circleOpen = new Circle(5);
+        /*Circle circleOpen = new Circle(5);
         circleOpen.setFill(Color.SKYBLUE);
-        getChildren().add(circleOpen);
+        getChildren().add(circleOpen);*/
     }
 
     /**
