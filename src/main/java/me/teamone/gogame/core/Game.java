@@ -148,10 +148,6 @@ public class Game {
         this.printGoStrings();
 
         //calculate scores
-        //for (GoString goString : goStrings.get(Team.BLACK)) {
-            //System.out.println(goString.isLoop());
-
-        //}
 
 
         //TODO: Check board for captures, and remove pieces and invalidate spaces for placement as needed
@@ -307,6 +303,12 @@ public class Game {
         if (surrounded) {
             cannidates.forEach(e -> { //capture
                 board.getSpecificSpace(e[0], e[1]).captureSpace(team);
+                if (team.equals(Team.WHITE)) {
+                    whitePlayer.updateScore(1);
+                }
+                else if (team.equals(Team.BLACK)) {
+                    blackPlayer.updateScore(1);
+                }
             });
             System.out.println("surrounded");
         } else {
