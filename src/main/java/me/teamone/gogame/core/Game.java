@@ -246,30 +246,62 @@ public class Game {
     }
 
     private void attemptCaptureSpread(ArrayList<int[]> cannidates, Team team) {
-        boolean surrounded = true; //assume valid
+        boolean surrounded = false; //assume invalid
         GoString cannidateString = new GoString(team); //gen empty string;
         cannidates.forEach(e -> { //fill string
            cannidateString.getSpaces().add(board.getSpecificSpace(e[0], e[1]));
         });
         Map<String, Integer> boundingBox = cannidateString.getBoundingBox();
+        System.out.println(boundingBox.toString());
         int minX = boundingBox.get("minX");
         int minY = boundingBox.get("minY");
         int maxX = boundingBox.get("maxX");
         int maxY = boundingBox.get("maxY");
-        for (int x = minX + 1; x <= maxX - 1; x++) {
-            for (int y = minY + 1; y <= maxY - 1; y++) {
-                // check all edges
-                if (!board.isInside(x, y, cannidateString, team)) {
-                    System.out.println(x + ", " + y + " is inside.");
-                    if (!(board.libertiesFree(board.getSpecificSpace(x, y)) <= 1 ||
-                        board.diagonalsFree(board.getSpecificSpace(x,y)) <= 1)) {
-                        surrounded = false;
+        if (minX == maxX && minY == maxY) { //box is one square
+            if (board.libertiesFree(board.getSpecificSpace(minX, minY)) == 0) {
+                surrounded = true;
+            }
+        } else if (minX == maxX) { // box is a vertical line
+            //System.out.println("Vertical line Spanning from: " + minY + " - " + maxY + " on row: " + minX + ".");
+            boolean allValid = true;
+            for (int y = minY; y <= maxY; y++) {
+                if (!(board.libertiesFree(board.getSpecificSpace(minX, y)) <= 1)) {
+                    allValid = false;
+                    break;
+                }
+            }
+            if (allValid) {
+                surrounded = true;
+            }
+        } else if (minY == maxY) { // horizontal line
+            boolean allValid = true;
+            for (int x = minX; x <= maxX; x++) {
+                if (!(board.libertiesFree(board.getSpecificSpace(x, minY)) <= 1)) {
+                    allValid = false;
+                    break;
+                }
+            }
+            if (allValid) {
+                surrounded = true;
+            }
+        } else { // we have a box of some sort TODO: MAKE ME WORK
+            boolean allValid = true;
+            for (int x = minX; x <= maxX; x++) {
+                for (int y = minY; y <= maxY; y++) {
+                    // check all edges spaces
+                    System.out.println(x + ", " + y + " checking.");
+                    if (board.libertiesFree(board.getSpecificSpace(x, y)) != 0 ||
+                            board.diagonalsFree(board.getSpecificSpace(x,y)) != 0) {
+                        allValid = false;
                         break;
                     }
                 }
+                if (!allValid) {
+                    break;
+                }
             }
-            if (!surrounded) {
-                break;
+            if (allValid) {
+                surrounded = true;
             }
         }
         if (surrounded) {
