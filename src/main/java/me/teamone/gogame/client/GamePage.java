@@ -153,14 +153,14 @@ public class GamePage extends BorderPane {
         HBox hBoxScore = new HBox(new Text("Score: "), txtScore);
 
         //creates a new Text object to display the player prisoner count
-        Text txtPrisonerCount = new Text();
-        txtPrisonerCount.textProperty().bind(player.getPrisonerCountStringProperty());
+        //Text txtPrisonerCount = new Text();
+        //txtPrisonerCount.textProperty().bind(player.getPrisonerCountStringProperty());
 
         //makes a new VBox to display score and then the player's prisoner count
-        HBox hBoxPrisonerCount = new HBox(new Text("Prisoners: "), txtPrisonerCount);
+       // HBox hBoxPrisonerCount = new HBox(new Text("Prisoners: "), txtPrisonerCount);
 
         //adds text to HBox
-        vBoxStats.getChildren().addAll(txtPlayerName, hBoxScore, hBoxPrisonerCount);
+        vBoxStats.getChildren().addAll(txtPlayerName, hBoxScore);
 
         //format VBox
         vBoxStats.setSpacing(10);
