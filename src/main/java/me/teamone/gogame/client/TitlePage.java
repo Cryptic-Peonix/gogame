@@ -2,12 +2,15 @@ package me.teamone.gogame.client;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+
+import java.util.Objects;
 
 /**Class to create a title page with the game title, a start button,
  * an exit button, and a rules button
@@ -17,44 +20,42 @@ public class TitlePage extends StackPane {
     //Stores the image url
     private static final String TITLE_IMAGE_URL = "/images/GOTitleImage.png";
 
-    //image view object
-    private final ImageView imgViewTitle;
     //Start Button object
     private final Button btnStart;
     //Quit button object
     private final Button btnQuit;
     //Rules button object
     private final Button btnRules;
-    //HBox object to display buttons
-    private final HBox hBoxButtons;
 
     /*Constructor*/
     public TitlePage() {
-        imgViewTitle = createTitleImageView();
+        //image view object
+        ImageView imgViewTitle = createTitleImageView();
 
         //Start button
         btnStart = createStyledButton("Start");
         //Start button click event handler
-        btnStart.setOnAction(e -> {
-            startGame();
-        });
+        btnStart.setOnAction(e -> startGame());
 
         //Quit button
         btnQuit = createStyledButton("Quit");
         //Quit button click event handler
-        btnQuit.setOnAction(e -> {
-            System.exit(0);
-        });
+        btnQuit.setOnAction(e -> System.exit(0));
 
         //Rules Button
         btnRules = createStyledButton("Rules");
         //Rules button click event handler
         btnRules.setOnAction(e -> {
             //add event handler code here
+            Alert a = new Alert(Alert.AlertType.INFORMATION);
+            a.setTitle("Under Construction!");
+            a.setContentText("Coming Soon!");
+            a.show();
         });
 
         //format the buttons in an hBox
-        hBoxButtons = createButtonBox();
+        //HBox object to display buttons
+        HBox hBoxButtons = createButtonBox();
 
         //add image and buttons to TitlePage
         getChildren().add(imgViewTitle);
@@ -70,10 +71,10 @@ public class TitlePage extends StackPane {
      */
     private ImageView createTitleImageView() {
         try {
-            Image img = new Image(getClass().getResourceAsStream(TITLE_IMAGE_URL), 640, 426, false, false);
+            Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(TITLE_IMAGE_URL)), 640, 426, false, false);
             return new ImageView(img);
         } catch (Exception e) {
-            System.out.println("Image Open error: " + e.toString());
+            System.out.println("Image Open error: " + e);
             return new ImageView(); // Return an empty ImageView in case of image loading failure
         }
     }

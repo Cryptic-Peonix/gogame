@@ -9,8 +9,9 @@ import me.teamone.gogame.core.helpers.PingDirection;
 import me.teamone.gogame.core.helpers.SpaceState;
 import me.teamone.gogame.core.helpers.Team;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Game class. Contains the logic for a game of go.
@@ -121,11 +122,12 @@ public class Game {
     }
 
     /**
-     * Get all "single" stones that are left hanging and add them to a string.
-     * @param space The space to add
-     * @return
-     * @throws NoStoneException
-     * @throws mismatchedTeamsException
+     * Get all "single" stones that are left hanging and add them to a string. <br>
+     * Used to bridge strings and/or hanging stones.
+     * @param space The space to check.
+     * @return An ArrayList of "hanging" stones.
+     * @throws NoStoneException Will throw this if a space in a string has no stone.
+     * @throws mismatchedTeamsException Will throw if there is a team mismatch.
      */
     public ArrayList<Integer> getUniqueAdjacentStringIndexes(BoardSpace space) throws NoStoneException, mismatchedTeamsException {
         ArrayList<Integer> indexes = new ArrayList<>();
@@ -142,6 +144,11 @@ public class Game {
         return indexes;
     }
 
+    /**
+     * Attempt to merge two strings.
+     * @param stringIndexes The indecision of the strings in their GoString List.
+     * @param team The team to check the merge for.
+     */
     public void attemptStringMerge(ArrayList<Integer> stringIndexes, Team team) {
         ArrayList<GoString> strings = new ArrayList<>();
         for (int i : stringIndexes) {
@@ -186,6 +193,10 @@ public class Game {
         }
     }
 
+    /**
+     * Check a GoString to see if it can capture anything.
+     * @param string The GoString to check.
+     */
     public void captureChecker (GoString string) {
         ArrayList<int[]> captureCannidites = new ArrayList<>();
         for (BoardSpace space : string.getSpaces()) {
@@ -210,8 +221,14 @@ public class Game {
         }
     }
 
+    /**
+     * Attempt to capture a group of cannidates.
+     * @param cannidates An ArrayList of points (arrays of [x,y]) that have the potential for capture.
+     * @param team The team to capture for.
+     */
     private void attemptCaptureSpread(ArrayList<int[]> cannidates, Team team) {
         boolean surrounded = false; //assume invalid
+        // hijack GoString so we can use its bounding box method.
         GoString cannidateString = new GoString(team); //gen empty string;
         cannidates.forEach(e -> { //fill string
            cannidateString.getSpaces().add(board.getSpecificSpace(e[0], e[1]));
@@ -382,6 +399,14 @@ public class Game {
         return true;
     }
 
+    /**
+     * Pings a direction from the provided space in a GoString.
+     * @param string The GoString the space is a part of. Used to verify if we have reconnected.
+     * @param space The space to ping from.
+     * @param direction The direction to ping (N, S, E, W)
+     * @return An ArrayList of spaces that have the potential to be captured. <br>
+     * WARNING: THESE SPACES ARE NOT VERIFIED, USE IN COMBINATION WITH attemptCaptureSpread().
+     */
     private ArrayList<int[]> performPing(GoString string, BoardSpace space, PingDirection direction) {
         ArrayList<BoardSpace> foundSpaces = new ArrayList<>();
         ArrayList<int[]> foundCoords = new ArrayList<>();
@@ -440,14 +465,12 @@ public class Game {
             lastSpace = nextSpace;
         }
         if (doCapture) {
-            foundSpaces.forEach(e -> {
-                foundCoords.add(new int[]{e.getX(), e.getY()});
-            });
+            foundSpaces.forEach(e -> foundCoords.add(new int[]{e.getX(), e.getY()}));
         }
         return foundCoords;
     }
 
-    /*
+    /**
      * Switch the current players
      */
     public void switchCurrentPlayer() {
@@ -463,7 +486,7 @@ public class Game {
     /**
      * Get the current player String
      */
-    public StringProperty getCurrentPlayerStringProperty() { return currentPlayerStringProperty; };
+    public StringProperty getCurrentPlayerStringProperty() { return currentPlayerStringProperty; }
 
     /**
      * Get the current winner of the game.
@@ -531,10 +554,10 @@ public class Game {
         return this.handicapCount > 0;
     }
 
-    public void addGoString(GoString string)  {
-        this.goStrings.get(string.getTeam()).add(string);
-    }
-
+    /**
+     * Attempt to add a space to a string. Searches all strings that match the spaces TEAM to see if a capture is valid.
+     * @param space The space to add.
+     */
     public void attemptAddToString(BoardSpace space) throws noStringMatchException, NoStoneException, mismatchedTeamsException {
         if (space.isInString()) {
             throw new RuntimeException("space already exists in string!");

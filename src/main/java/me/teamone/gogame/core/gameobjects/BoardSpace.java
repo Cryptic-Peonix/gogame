@@ -1,34 +1,22 @@
 package me.teamone.gogame.core.gameobjects;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Text;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.StonePlacementException;
 import me.teamone.gogame.core.helpers.BoardSide;
-import me.teamone.gogame.core.helpers.Team;
 import me.teamone.gogame.core.helpers.SpaceState;
+import me.teamone.gogame.core.helpers.Team;
 
 import java.util.Objects;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
-import static java.lang.Math.abs;
 
 /**
  * Class for representing a space on the board.
  */
 public class BoardSpace extends StackPane {
-
-    /**
-     * Added by Taran
-     *
-     *Constant for boardspace image url
-     */
-    private final String IMAGE_URL = "/images/boardspace.png";
 
     /**
      * Container for the space's stone.
@@ -48,7 +36,7 @@ public class BoardSpace extends StackPane {
      */
     private SpaceState state;
     private boolean inString;
-    private BoardSide side;
+    private final BoardSide side;
 
     /**
      * Constructor.
@@ -61,7 +49,10 @@ public class BoardSpace extends StackPane {
         this.side = side;
 
         //add try block
-        Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 30, 30, false, false);
+
+        // image url
+        String IMAGE_URL = "/images/boardspace.png";
+        Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGE_URL)), 30, 30, false, false);
 
         //open circle (blue) for testing
         /*Circle circleOpen = new Circle(5);

@@ -18,14 +18,12 @@ Final Score page to display the winner of the game.
 Includes a Quit Button to go back to the TitlePage
  */
 public class FinalScorePage extends VBox {
-    //game object
-    private final Game game;
 
     //HashMap storing game results
     private final HashMap<String, String> gameResults;
 
     public FinalScorePage(Game game) {
-        this.game = game;
+        //game object
 
         //stores the game results in HashMap
         gameResults = game.getGameResults();
@@ -65,9 +63,7 @@ public class FinalScorePage extends VBox {
 
         //Quit button to take user back to the title page
         Button btnQuit = new Button("Quit");
-        btnQuit.setOnAction(e -> {
-            System.exit(0);
-        });
+        btnQuit.setOnAction(e -> System.exit(0));
 
         //sets text to white and background to black if the winner is black
         if (winner.equals("BLACK")) {

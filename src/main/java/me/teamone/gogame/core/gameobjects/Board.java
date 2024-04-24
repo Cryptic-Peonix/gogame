@@ -31,7 +31,6 @@ public class Board extends GridPane{
      */
     private final Game game;
 
-    private final String IMAGE_URL = "/images/wood_texture.jpg";
     final int median;
 
     /**
@@ -46,21 +45,6 @@ public class Board extends GridPane{
         this.game = game;
 
         this.median = (x / 2 + (1 % 2 + x % 2) / 2) - 1;
-
-        initBoard();
-    }
-
-    /**
-     * Generic constructor.
-     * Generates a 19x19 Grid.
-     */
-    public Board(Game game) {
-        this.xSize = 19;
-        this.ySize = 19;
-
-        this.game = game;
-
-        this.median = 9;
 
         initBoard();
     }
@@ -86,7 +70,8 @@ public class Board extends GridPane{
                 //Added by Taran
                 //Populates the board's GridPane with BoardSpace StackPanes
                 this.add(boardSpace, i, j);
-                BackgroundImage myBI = new BackgroundImage(new Image(getClass().getResourceAsStream(IMAGE_URL), 32, 32, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+                String IMAGE_URL = "/images/wood_texture.jpg";
+                BackgroundImage myBI = new BackgroundImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGE_URL)), 32, 32, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
                         BackgroundSize.DEFAULT);
                 boardSpace.setBackground(new Background(myBI));
 
@@ -156,16 +141,6 @@ public class Board extends GridPane{
 
     public int getySize() {
         return ySize;
-    }
-
-    /**
-     * Print the game board to the console.
-     * Used for testing.
-     */
-    public void printBoard() {
-        for (int i = 0; i < this.xSize; i++) {
-            System.out.println("Row #" + i + ":" + Arrays.toString(this.board[i]));
-        }
     }
 
 
@@ -262,6 +237,11 @@ public class Board extends GridPane{
         return true;
     }
 
+    /**
+     * Get the count of free diagonals adjacent to a space.
+     * @param space The BoardSpace to check.
+     * @return The count of empty spaces (1-4).
+     */
     public int diagonalsFree(BoardSpace space) {
         ArrayList<BoardSpace> adjSpaces = getAdjacentSpaces(space);
         int counter = 0;
@@ -301,6 +281,13 @@ public class Board extends GridPane{
         return adjacentSpaces;
     }
 
+    /**
+     * Used in capture logic v1 to capture spaces, very buggy, do not use.
+     * Sets the captures inside a GoString.
+     * @param string The string to capture
+     * @param team The team.
+     */
+    @Deprecated
     public void setCapturesInsideString(GoString string, Team team) {
         List<BoardSpace> coordinatesInside = new ArrayList<>();
         // Find the bounding box of the shape
@@ -335,6 +322,7 @@ public class Board extends GridPane{
      * @param string The GoString containing the outline of the polygon.
      * @return true if the point is inside the polygon, false otherwise.
      */
+    @Deprecated
     public boolean isInside(int x, int y, GoString string, Team team) {
         //if the space is occupied by the same team's stone, it is not inside the string
         if (getSpecificSpace(x, y).getCaptureOwner() != null && getSpecificSpace(x, y).getCaptureOwner().equals(team)) return false;
@@ -384,15 +372,8 @@ public class Board extends GridPane{
         System.out.println("xCount" + xCount + " yCount" + yCount);
 
         //if the count is even, then the space is outside the string
-        if (xCount % 2 == 0 && yCount % 2 == 0) {
-            return false;
-        }
         //if the count is odd, then the space is inside the string
-        else {
-            return true;
-        }
-
+        return xCount % 2 != 0 || yCount % 2 != 0;
     }
-
 }
 

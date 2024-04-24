@@ -1,21 +1,17 @@
 package me.teamone.gogame.client;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import me.teamone.gogame.core.Game;
-import me.teamone.gogame.core.gameobjects.Board;
 import me.teamone.gogame.core.gameobjects.Player;
 import me.teamone.gogame.core.helpers.Team;
 
@@ -36,17 +32,6 @@ public class GamePage extends BorderPane {
     //stores Surrender button
     private final Button btnSurrender;
 
-    //stores the output TextField
-    private final VBox vBoxOutput;
-
-    //stores the White stats
-    private final VBox vBoxWhiteStats;
-
-    //stores the Black stats
-    private final VBox vBoxBlackStats;
-
-    private final String IMAGE_URL = "/images/stone.jpg";
-
     /*Constructors*/
     //Empty Constructor
     public GamePage() {
@@ -59,20 +44,23 @@ public class GamePage extends BorderPane {
         btnQuit.setOnAction(e -> quitGame());
 
         //instantiate Surrender button
-        btnSurrender = new Button("Surrender");
+        btnSurrender = new Button("End Game");
         //runs the endGame method when the user clicks the surrender button
         btnSurrender.setOnAction(e -> endGame());
 
-        //Background image for other vboxes
-        BackgroundImage myBI = new BackgroundImage(new Image(getClass().getResourceAsStream(IMAGE_URL), 32, 32, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
+        //Background image for other vboxes it was ugly, disabled for now
+        //String IMAGE_URL = "/images/stone.jpg";
+        // BackgroundImage myBI = new BackgroundImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGE_URL)), 32, 32, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,BackgroundSize.DEFAULT);
 
         //instantiate the output TextField
-        vBoxOutput = createVBoxOutput(game.getCurrentPlayer());
+        //stores the output TextField
+        VBox vBoxOutput = createVBoxOutput();
 
         //instantiate the stats TextFields
-        vBoxWhiteStats = createVBoxStats(game.getWhitePlayer());
-        vBoxBlackStats = createVBoxStats(game.getBlackPlayer());
+        //stores the White stats
+        VBox vBoxWhiteStats = createVBoxStats(game.getWhitePlayer());
+        //stores the Black stats
+        VBox vBoxBlackStats = createVBoxStats(game.getBlackPlayer());
 
 
         //place buttons in hBoxButtons
@@ -109,10 +97,9 @@ public class GamePage extends BorderPane {
 
     /**
      * Creates and formats the output TextFields
-     * @param currentPlayer whose current turn
      * @return VBox with correct format
      */
-    private VBox createVBoxOutput(Player currentPlayer) {
+    private VBox createVBoxOutput() {
         //creates a new VBox to store output data
         VBox vBoxOutput = new VBox();
 
@@ -205,8 +192,8 @@ public class GamePage extends BorderPane {
         Stage stage = (Stage) getScene().getWindow();
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Surrender?");
-        alert.setHeaderText("Are you sure you want to surrender?");
+        alert.setTitle("End Game?");
+        alert.setHeaderText("Are you sure you want to?");
         alert.setContentText("This will end the game.");
 
         //displays a dialog box asking the user if they're sure they want to quit

@@ -33,6 +33,12 @@ public enum Team {
         return color;
     }
 
+    /**
+     * Get the opposite team. <br>
+     * For example: inputting WHITE would return BLACK.
+     * @param team The team to get the opposite of.
+     * @return The opposite TEAM value.
+     */
     public static Team getOpposite(Team team) {
         if (team == Team.WHITE) {
             return Team.BLACK;

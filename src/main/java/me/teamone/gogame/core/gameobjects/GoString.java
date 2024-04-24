@@ -8,7 +8,6 @@ import me.teamone.gogame.core.helpers.Team;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * GoString class. Used to represent a "String" in the game of go.
@@ -147,14 +146,6 @@ public class GoString {
         this.spaces.addAll(food.getSpaces());
     }
 
-    public void wipeSpaces() {
-        this.spaces.clear();
-    }
-
-    public boolean isEmpty() {
-        return this.spaces.isEmpty();
-    }
-
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("Spaces: ");
@@ -172,9 +163,8 @@ public class GoString {
      * been visited.
      * @param currentSpace The current space to check
      * @param firstPriorSpace The space previous to
-     * @param visited
-     * @return
      */
+    @Deprecated
     public boolean isLoop(BoardSpace currentSpace, BoardSpace firstPriorSpace, BoardSpace secondPriorSpace, ArrayList<BoardSpace> visited) {
 
         //returns true if current position solves the problem
@@ -203,14 +193,20 @@ public class GoString {
      * BoardSpace in the GoString ArrayList
      * @return true if the GoString contains a closed loop, false if it is just a line
      */
+    @Deprecated
     public boolean isLoop() {
-        return isLoop(spaces.get(0), null, null, new ArrayList<BoardSpace>());
+        return isLoop(spaces.get(0), null, null, new ArrayList<>());
     }
 
+    /**
+     * V2 of capture logic, checked if a string was a "loop".
+     * Picked a space in the string, and tried to draw a line back to itself.
+     * Didn't work very well.
+     * @return True if the string was a loop.
+     */
+    @Deprecated
     public boolean isLoopV2() {
         ArrayList<BoardSpace> previousSpaces = new ArrayList<>();
-        Random random = new Random();
-        // get random space in string
         BoardSpace seed = this.spaces.get(this.spaces.size() - 1); // get last stone added to GoString
         System.out.println(this.team + " seed: " + seed);
         BoardSpace currentSpace = seed;
@@ -277,6 +273,13 @@ public class GoString {
         return false;
     }
 
+    /**
+     * Got the non, diagonal neighbors of an origin space.
+     * @param origin The BoardSpace to check.
+     * @param spaces The space's surrounding spaces.
+     * @return An ArrayList of BoardSpaces that are diagonal.
+     */
+    @Deprecated
     private ArrayList<BoardSpace> getNonDiagSpaces(BoardSpace origin, ArrayList<BoardSpace> spaces) {
         ArrayList<BoardSpace> nonDiag = new ArrayList<>();
         for (BoardSpace space : spaces) {
@@ -300,6 +303,11 @@ public class GoString {
                 (origin.getX() - 1 != check.getX() || origin.getY() - 1 != check.getY());
     }
 
+    /**
+     * Trim a list down to 2 elements
+     * @param s the list to trim.
+     */
+    @Deprecated
     private void attemptPrevTrim(ArrayList<?> s) {
         if (s.size() > 2) {
             s.remove(0);
@@ -331,11 +339,15 @@ public class GoString {
         return neighbours;
     }
 
+    /**
+     * Get the bounding box of a string. Gets all four corners.
+     * @return The bounds of the box in an HashMAp.
+     */
     public Map<String, Integer> getBoundingBox() {
         int minX = Integer.MAX_VALUE;
-        int minY = Integer.MAX_VALUE;;
-        int maxX = Integer.MIN_VALUE;;
-        int maxY = Integer.MIN_VALUE;;
+        int minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
 
         for (BoardSpace space : spaces) {
             if (space.getX() < minX) minX = space.getX();
