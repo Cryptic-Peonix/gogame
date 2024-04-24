@@ -32,6 +32,11 @@ public class GoString {
         space2.setInString(true);
     }
 
+    public GoString(Team team) {
+        this.team = team;
+        this.spaces = new ArrayList<>();
+    }
+
     /**
      * Checks if a piece, s2, is adjacent (either horizontally, veritcally, or diagonally) to
      * another piece, s1.

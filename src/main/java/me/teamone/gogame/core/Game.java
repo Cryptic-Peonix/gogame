@@ -9,9 +9,7 @@ import me.teamone.gogame.core.helpers.PingDirection;
 import me.teamone.gogame.core.helpers.SpaceState;
 import me.teamone.gogame.core.helpers.Team;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Game class. Contains the logic for a game of go.
@@ -134,6 +132,7 @@ public class Game {
         }
         System.out.println(space.getSide());
 
+        /**
         if (space.isInString()) {
             for (GoString string : goStrings.get(currentPlayer.getTeam())) {
                 if (string.inGoString(space) && string.isLoopV2()) {
@@ -142,6 +141,7 @@ public class Game {
                 }
             }
         }
+         */
 
         //check if any strings are touching and combine them
         //TODO: Create this method
@@ -222,16 +222,69 @@ public class Game {
 
     public void captureChecker (GoString string) {
         Team team = string.getTeam();
+        ArrayList<int[]> captureCannidites = new ArrayList<>();
         for (BoardSpace space : string.getSpaces()) {
             for (int pingsPerformed = 0; pingsPerformed < 4; pingsPerformed++) {
-                //TODO: Stop capture of open loops
-                performPing(string, space, PingDirection.getDirectionByID(pingsPerformed));
+                //TODO: fix some capture errors
+                performPing(string, space, PingDirection.getDirectionByID(pingsPerformed)).forEach(e -> {
+                    boolean addable = true;
+                    for (int[] c : captureCannidites) {
+                        if (c[0] == e[0] && c[1] == e[1]) {
+                            addable = false;
+                            break;
+                        }
+                    }
+                    if (addable) {
+                        captureCannidites.add(e);
+                    }
+                });
             }
+        }
+        if (!captureCannidites.isEmpty()) {
+            attemptCaptureSpread(captureCannidites, string.getTeam());
         }
     }
 
-    private void performPing(GoString string, BoardSpace space, PingDirection direction) {
+    private void attemptCaptureSpread(ArrayList<int[]> cannidates, Team team) {
+        boolean surrounded = true; //assume valid
+        GoString cannidateString = new GoString(team); //gen empty string;
+        cannidates.forEach(e -> { //fill string
+           cannidateString.getSpaces().add(board.getSpecificSpace(e[0], e[1]));
+        });
+        Map<String, Integer> boundingBox = cannidateString.getBoundingBox();
+        int minX = boundingBox.get("minX");
+        int minY = boundingBox.get("minY");
+        int maxX = boundingBox.get("maxX");
+        int maxY = boundingBox.get("maxY");
+        for (int x = minX + 1; x <= maxX - 1; x++) {
+            for (int y = minY + 1; y <= maxY - 1; y++) {
+                // check all edges
+                if (!board.isInside(x, y, cannidateString, team)) {
+                    System.out.println(x + ", " + y + " is inside.");
+                    if (!(board.libertiesFree(board.getSpecificSpace(x, y)) <= 1 ||
+                        board.diagonalsFree(board.getSpecificSpace(x,y)) <= 1)) {
+                        surrounded = false;
+                        break;
+                    }
+                }
+            }
+            if (!surrounded) {
+                break;
+            }
+        }
+        if (surrounded) {
+            cannidates.forEach(e -> { //capture
+                board.getSpecificSpace(e[0], e[1]).captureSpace(team);
+            });
+            System.out.println("surrounded");
+        } else {
+            System.out.println("not surrounded");
+        }
+    }
+
+    private ArrayList<int[]> performPing(GoString string, BoardSpace space, PingDirection direction) {
         ArrayList<BoardSpace> foundSpaces = new ArrayList<>();
+        ArrayList<int[]> foundCoords = new ArrayList<>();
         int xMove = direction.getMoveXAmount();
         int yMove = direction.getMoveYAmount();
         final int MAX_TURNS = 1;
@@ -277,10 +330,11 @@ public class Game {
             lastSpace = nextSpace;
         }
         if (doCapture) {
-            for (BoardSpace s : foundSpaces) {
-                s.captureSpace(string.getTeam());
-            }
+            foundSpaces.forEach(e -> {
+                foundCoords.add(new int[]{e.getX(), e.getY()});
+            });
         }
+        return foundCoords;
     }
 
     /*

@@ -191,6 +191,32 @@ public class Board extends GridPane{
         return adjacentSpaces;
     }
 
+    public int libertiesFree(BoardSpace space) {
+        ArrayList<BoardSpace> adjSpaces = getAdjacentSpaces(space);
+        int counter = 0;
+        for (BoardSpace s : adjSpaces) {
+            if (GoString.isSpaceDiagnonal(space, s)) {
+                if (s.getState() == SpaceState.OPEN) {
+                    counter++;
+                }
+            }
+        }
+        return counter;
+    }
+
+    public int diagonalsFree(BoardSpace space) {
+        ArrayList<BoardSpace> adjSpaces = getAdjacentSpaces(space);
+        int counter = 0;
+        for (BoardSpace s : adjSpaces) {
+            if (!GoString.isSpaceDiagnonal(space, s)) {
+                if (s.getState() == SpaceState.OPEN) {
+                    counter++;
+                }
+            }
+        }
+        return counter;
+    }
+
     /**
      * Get all adjacent spaces to a GoString
      * @param string the GoString to check
@@ -251,7 +277,7 @@ public class Board extends GridPane{
      * @param string The GoString containing the outline of the polygon.
      * @return true if the point is inside the polygon, false otherwise.
      */
-    private boolean isInside(int x, int y, GoString string, Team team) {
+    public boolean isInside(int x, int y, GoString string, Team team) {
         //if the space is occupied by the same team's stone, it is not inside the string
         if (getSpecificSpace(x, y).getCaptureOwner() != null && getSpecificSpace(x, y).getCaptureOwner().equals(team)) return false;
 
