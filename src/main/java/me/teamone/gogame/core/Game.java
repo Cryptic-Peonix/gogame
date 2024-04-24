@@ -354,6 +354,16 @@ public class Game {
                     doCapture = true;
                     break; // we have returned to our stone
                 }
+                else {
+                    try {
+                        if (nextSpace.getStone().getTeam() != string.getTeam()) {
+                            foundSpaces.add(nextSpace);
+                        }
+                    }
+                    catch (NoStoneException e)  {
+                        System.out.println("No stone in space");
+                    }
+                }
             }
             // check if we can add the next space to the capture list
             if (nextSpace.getState() == SpaceState.OPEN) {

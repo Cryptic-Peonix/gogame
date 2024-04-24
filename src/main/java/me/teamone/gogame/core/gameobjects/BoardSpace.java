@@ -90,6 +90,7 @@ public class BoardSpace extends StackPane {
      * @param team The team to set the capture to.
      */
     public void captureSpace(Team team) {
+        System.out.println("Stone at " + getX() + ", " + getY() + " is captured");
         state = SpaceState.CAPTURED;
         captureOwner = team;
 
@@ -97,7 +98,10 @@ public class BoardSpace extends StackPane {
         Circle circleCaptured = new Circle(5);
         circleCaptured.setFill(Color.GREEN);
         this.getChildren().add(circleCaptured);
-        stone = null;
+
+        if (hasStone()) {
+            removeStone();
+        }
     }
 
     /**
@@ -189,6 +193,11 @@ public class BoardSpace extends StackPane {
 
     public BoardSide getSide() {
         return side;
+    }
+
+    public void removeStone() {
+        this.getChildren().remove(stone);
+        this.stone = null;
     }
 
     @Override
