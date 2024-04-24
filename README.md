@@ -4,5 +4,4 @@ A project for the board game "Go"
 
 Authors:
 - Clark
-- Santelli
 - Bedley
