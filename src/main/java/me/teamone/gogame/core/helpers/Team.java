@@ -32,4 +32,15 @@ public enum Team {
     public Color getColor() {
         return color;
     }
+
+    public static Team getOpposite(Team team) {
+        if (team == Team.WHITE) {
+            return Team.BLACK;
+        } else if (team == Team.BLACK) {
+            return Team.WHITE;
+        } else {
+            return Team.TIE;
+        }
+    }
+
 }

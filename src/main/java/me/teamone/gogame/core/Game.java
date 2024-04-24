@@ -10,6 +10,7 @@ import me.teamone.gogame.core.helpers.SpaceState;
 import me.teamone.gogame.core.helpers.Team;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
  * Game class. Contains the logic for a game of go.
@@ -69,6 +70,7 @@ public class Game {
      * @param coords The coordinates to place a stone
      */
     public void playerTurn(int[] coords) throws StonePlacementException, SpaceFilledException, isCapturedException, NoStoneException, mismatchedTeamsException, noStringMatchException, StringCreationException {
+        System.out.println(this.currentPlayer.getTeam() + "'S TURN: ");
         Stone stone = new Stone(this.currentPlayer.getTeam(), stoneIDcounter);
         // attempt to place stone
         this.board.placeStone(stone, coords);
@@ -118,13 +120,22 @@ public class Game {
         System.out.println();
     }
 
+    /**
+     * Get all "single" stones that are left hanging and add them to a string.
+     * @param space The space to add
+     * @return
+     * @throws NoStoneException
+     * @throws mismatchedTeamsException
+     */
     public ArrayList<Integer> getUniqueAdjacentStringIndexes(BoardSpace space) throws NoStoneException, mismatchedTeamsException {
         ArrayList<Integer> indexes = new ArrayList<>();
         for (GoString str : this.goStrings.get(space.getStone().getTeam())) {
             for (BoardSpace s : str.getSpaces()) {
-                if (GoString.verifySpaces(space, s)) {
-                    indexes.add(this.goStrings.get(space.getStone().getTeam()).indexOf(str));
-                    break;
+                if (s.getState() != SpaceState.CAPTURED) {
+                    if (GoString.verifySpaces(space, s)) {
+                        indexes.add(this.goStrings.get(space.getStone().getTeam()).indexOf(str));
+                        break;
+                    }
                 }
             }
         }
@@ -289,6 +300,17 @@ public class Game {
         if (surrounded && verifyBoundingBox(minX, maxX, minY, maxY, team)) {
             cannidates.forEach(e -> { //capture
                 board.getSpecificSpace(e[0], e[1]).captureSpace(team);
+                ArrayList<Integer> stringsToRemove = new ArrayList<>(); // index of the strings to remove if needed
+                Team opposite = Team.getOpposite(team);
+                for (int k = 0; k < this.goStrings.get(opposite).size(); k++) {
+                    if (this.goStrings.get(opposite).get(k).inGoString(this.board.getSpecificSpace(e[0], e[1]))) { // if the captured piece is in a string
+                        stringsToRemove.add(k);
+                    }
+                }
+                if (!stringsToRemove.isEmpty()) {
+                    // remove the strings where possible
+                    removeStrings(stringsToRemove, opposite);
+                }
                 if (team.equals(Team.WHITE)) {
                     whitePlayer.updateScore(1);
                 }
@@ -299,6 +321,26 @@ public class Game {
             System.out.println("surrounded");
         } else {
             System.out.println("not surrounded");
+        }
+    }
+
+    /**
+     * Recursively delete the following strings from the string list.
+     * @param stringIndexes The indexes to delete.
+     * @param team The team the string belongs to.
+     */
+    private void removeStrings(ArrayList<Integer> stringIndexes, Team team) {
+        if (stringIndexes.size() == 1) {
+            GoString string = this.goStrings.get(team).get(stringIndexes.get(0));
+            this.goStrings.get(team).remove(string);
+        } else {
+            GoString string = this.goStrings.get(team).get(stringIndexes.get(1));
+            this.goStrings.get(team).remove(string);
+            stringIndexes.remove(1);
+            for (int j = 1; j < stringIndexes.size(); j++) {
+                stringIndexes.set(j, stringIndexes.get(j) - 1);
+            }
+            removeStrings(stringIndexes, team);
         }
     }
 
@@ -497,8 +539,8 @@ public class Game {
         if (space.isInString()) {
             throw new RuntimeException("space already exists in string!");
         }
-        Team team = space.getStone().getTeam();
         boolean matched = false;
+        Team team = space.getStone().getTeam();
         ArrayList<GoString> strings = this.goStrings.get(team);
         for (GoString s : strings) {
             for (BoardSpace sp : s.getSpaces()) {
