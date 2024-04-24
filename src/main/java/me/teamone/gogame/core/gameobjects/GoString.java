@@ -160,42 +160,6 @@ public class GoString {
         return result.toString();
     }
 
-    /*public boolean isConnected() {
-        BoardSpace firstSpace = spaces.get(0);
-        BoardSpace destinationSpace = spaces.get(spaces.size() - 1);
-        ArrayList<BoardSpace> visited = new ArrayList<>();
-
-        if (spaces.size() < 4) return false;
-
-        if (isConnected(firstSpace, destinationSpace, firstSpace, visited)) {
-            return isConnected(destinationSpace, firstSpace, destinationSpace, visited);
-        }
-
-        return false;
-    }*/
-
-    /*
-    public boolean isConnected(BoardSpace firstSpace, BoardSpace destinationSpace, BoardSpace currentSpace, ArrayList<BoardSpace> visited) {
-        if (currentSpace == destinationSpace) {
-            return true;
-        }
-
-        visited.add(currentSpace);
-
-        for (BoardSpace space : this.getSpaces()) {
-            if (space != currentSpace && currentSpace.isAdjacent(space)) {
-                if (!visited.contains(space)) {
-                    if (isConnected(firstSpace, destinationSpace, space, visited)) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        visited.remove(currentSpace);
-        return false;
-    }*/
-
     /**
      * Checks if a GoString contains a loop. This is a recursive method
      * as it performs the isLoop check on each stone neighbouring the

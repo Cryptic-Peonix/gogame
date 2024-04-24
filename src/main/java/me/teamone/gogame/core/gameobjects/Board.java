@@ -11,6 +11,7 @@ import me.teamone.gogame.core.exceptions.isCapturedException;
 
 import java.util.*;
 
+import me.teamone.gogame.core.helpers.BoardSide;
 import me.teamone.gogame.core.helpers.SpaceState;
 import me.teamone.gogame.core.helpers.Team;
 
@@ -31,6 +32,7 @@ public class Board extends GridPane{
     private final Game game;
 
     private final String IMAGE_URL = "/images/wood_texture.jpg";
+    final int median;
 
     /**
      * Constructor; creates a board object.
@@ -42,6 +44,8 @@ public class Board extends GridPane{
         this.ySize = y;
 
         this.game = game;
+
+        this.median = (x / 2 + (1 % 2 + x % 2) / 2) - 1;
 
         initBoard();
     }
@@ -56,6 +60,8 @@ public class Board extends GridPane{
 
         this.game = game;
 
+        this.median = 9;
+
         initBoard();
     }
 
@@ -67,7 +73,14 @@ public class Board extends GridPane{
         for (int i = 0; i < this.xSize; i++) {
             for (int j = 0; j < this.ySize; j++) {
                 int[] space = {i, j};
-                BoardSpace boardSpace = new BoardSpace(space);
+                BoardSide side = BoardSide.MIDDLE;
+                if (i < median) {
+                    side = BoardSide.LEFT;
+                }
+                if (i > median) {
+                    side = BoardSide.RIGHT;
+                }
+                BoardSpace boardSpace = new BoardSpace(space, side);
                 this.board[i][j] = boardSpace;
 
                 //Added by Taran

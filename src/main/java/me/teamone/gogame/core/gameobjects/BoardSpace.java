@@ -6,6 +6,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import me.teamone.gogame.core.exceptions.NoStoneException;
 import me.teamone.gogame.core.exceptions.StonePlacementException;
+import me.teamone.gogame.core.helpers.BoardSide;
 import me.teamone.gogame.core.helpers.Team;
 import me.teamone.gogame.core.helpers.SpaceState;
 
@@ -47,15 +48,17 @@ public class BoardSpace extends StackPane {
      */
     private SpaceState state;
     private boolean inString;
+    private BoardSide side;
 
     /**
      * Constructor.
      * @param gridSpace The position on the grid.
      */
-    public BoardSpace(int[] gridSpace) {
+    public BoardSpace(int[] gridSpace, BoardSide side) {
         this.state = SpaceState.OPEN;
         this.gridSpace = gridSpace;
         this.inString = false;
+        this.side = side;
 
         //add try block
         Image img = new Image(getClass().getResourceAsStream(IMAGE_URL), 30, 30, false, false);
@@ -182,6 +185,10 @@ public class BoardSpace extends StackPane {
 
     public void setInString(boolean val) {
         this.inString = val;
+    }
+
+    public BoardSide getSide() {
+        return side;
     }
 
     @Override

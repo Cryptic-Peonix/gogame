@@ -4,6 +4,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import me.teamone.gogame.core.exceptions.*;
 import me.teamone.gogame.core.gameobjects.*;
+import me.teamone.gogame.core.helpers.BoardSide;
+import me.teamone.gogame.core.helpers.PingDirection;
+import me.teamone.gogame.core.helpers.SpaceState;
 import me.teamone.gogame.core.helpers.Team;
 
 import java.util.ArrayList;
@@ -125,6 +128,11 @@ public class Game {
         if (!space.isInString()) {
             this.attemptAddToString(space);
         }
+        for (GoString string : this.goStrings.get(this.currentPlayer.getTeam())) {
+            stringCleanup(string);
+            captureChecker(string);
+        }
+        System.out.println(space.getSide());
 
         if (space.isInString()) {
             for (GoString string : goStrings.get(currentPlayer.getTeam())) {
@@ -185,6 +193,93 @@ public class Game {
                 stringIndexes.set(j, stringIndexes.get(j) - 1);
             }
             attemptStringMerge(stringIndexes, team); // recursive until we get down to 2
+        }
+    }
+
+    /**
+     * Attempt to "cleanup" a string. Check all the spaces surrounding a string and absorb any
+     * spaces with stones of the same team that aren't in a string.
+     * @param string the GoString to check
+     */
+    private void stringCleanup(GoString string) {
+        try {
+            ArrayList<BoardSpace> spacesToAdd = new ArrayList<>();
+            for (BoardSpace space : string.getSpaces()) {
+                for (BoardSpace aSpace : board.getAdjacentSpaces(space)) { //get adjacent spaces
+                    if (aSpace.getState() == SpaceState.FILLED && aSpace.getStone().getTeam() == string.getTeam()
+                            && !aSpace.isInString()) {
+                        spacesToAdd.add(aSpace); // cant edit spaces in string while iterating.
+                    }
+                }
+            }
+            spacesToAdd.forEach(e -> {
+                string.getSpaces().add(e); // bypass checks because we have already verified above
+                e.setInString(true);
+            });
+        } catch (NoStoneException ignore) { // ignore for now
+        }
+    }
+
+    public void captureChecker (GoString string) {
+        Team team = string.getTeam();
+        for (BoardSpace space : string.getSpaces()) {
+            for (int pingsPerformed = 0; pingsPerformed < 4; pingsPerformed++) {
+                //TODO: Stop capture of open loops
+                performPing(string, space, PingDirection.getDirectionByID(pingsPerformed));
+            }
+        }
+    }
+
+    private void performPing(GoString string, BoardSpace space, PingDirection direction) {
+        ArrayList<BoardSpace> foundSpaces = new ArrayList<>();
+        int xMove = direction.getMoveXAmount();
+        int yMove = direction.getMoveYAmount();
+        final int MAX_TURNS = 1;
+        int total_turns = 0;
+        boolean doCapture = false;
+        BoardSpace lastSpace = space;
+        while (total_turns <= MAX_TURNS) {
+            BoardSpace nextSpace;
+            try {
+                nextSpace = board.getSpecificSpace(lastSpace.getX() + xMove, lastSpace.getY() + yMove);
+            } catch (ArrayIndexOutOfBoundsException e) { // if we hit an edge we need to make a turn
+                if (lastSpace.getSide() == BoardSide.LEFT || lastSpace.getSide() == BoardSide.MIDDLE) {
+                    if (direction == PingDirection.NORTH || direction == PingDirection.SOUTH) {
+                        xMove = PingDirection.EAST.getMoveXAmount();
+                        yMove = PingDirection.EAST.getMoveYAmount();
+                    } else {
+                        xMove = PingDirection.SOUTH.getMoveXAmount();
+                        yMove = PingDirection.SOUTH.getMoveYAmount();
+                    }
+                } else {
+                    if(direction == PingDirection.NORTH || direction == PingDirection.SOUTH) {
+                        xMove = PingDirection.WEST.getMoveXAmount();
+                        yMove = PingDirection.WEST.getMoveYAmount();
+                    } else {
+                        xMove = PingDirection.NORTH.getMoveXAmount();
+                        yMove = PingDirection.NORTH.getMoveYAmount();
+                    }
+                }
+                total_turns++;
+                continue;
+            }
+            // check if the next space we hit is a space with a stone in our string
+            if (nextSpace.hasStone()) {
+                if (string.inGoString(nextSpace)) {
+                    doCapture = true;
+                    break; // we have returned to our stone
+                }
+            }
+            // check if we can add the next space to the capture list
+            if (nextSpace.getState() == SpaceState.OPEN) {
+                foundSpaces.add(nextSpace);
+            }
+            lastSpace = nextSpace;
+        }
+        if (doCapture) {
+            for (BoardSpace s : foundSpaces) {
+                s.captureSpace(string.getTeam());
+            }
         }
     }
 
@@ -321,10 +416,6 @@ public class Game {
             }
         }
     }
-
-
-
-
 
     /**
      * Print all GoStrings on the Board

@@ -34,29 +34,4 @@ public class App extends Application {
         //test();
     }
 
-    public static void test() {
-        Player bp = new Player("Joe Schmoe", Team.BLACK);
-        Player wp = new Player("Steve Pineapple", Team.WHITE);
-        Game game = new Game(bp, wp, 0, 19);
-        int[] pos1 = {1,1};
-        BoardSpace space = new BoardSpace(pos1);
-        int[] pos2 = {2,2};
-        BoardSpace space1 = new BoardSpace(pos2);
-        int[] pos3 = {3, 2};
-        BoardSpace space2 = new BoardSpace(pos3);
-
-
-        try {
-            space.placeStone(new Stone(Team.WHITE, 1));
-            space1.placeStone(new Stone(Team.WHITE, 2));
-            space2.placeStone(new Stone(Team.WHITE, 3));
-            GoString string = new GoString(space, space1);
-            game.addGoString(string);
-            game.attemptAddToString(space2);
-            System.out.println(string.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
