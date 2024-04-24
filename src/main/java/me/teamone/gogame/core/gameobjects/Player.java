@@ -11,8 +11,11 @@ public class Player {
     private final String name;
     private final Team team;
     private int score = 0;
+    private int prisonerCount = 0;
 
     private StringProperty scoreStringProperty = new SimpleStringProperty("");
+    private StringProperty prisonerCountStringProperty = new SimpleStringProperty("");
+
 
 
     /**
@@ -24,6 +27,7 @@ public class Player {
         this.name = name;
         this.team = team;
         this.scoreStringProperty.set(String.valueOf(this.score));
+        this.prisonerCountStringProperty.set(String.valueOf(this.prisonerCount));
     }
 
     /**
@@ -46,7 +50,7 @@ public class Player {
         return score;
     }
 
-    public StringProperty getScoreStringProperty() { return scoreStringProperty; };
+    public StringProperty getScoreStringProperty() { return scoreStringProperty; }
 
     /**
      * Update the score by a value.
@@ -65,4 +69,18 @@ public class Player {
         this.score = value;
         this.scoreStringProperty.set(String.valueOf(score));
     }
+
+    /**
+     * update the prisonerCount by a value
+     * @param value The amount to update the score by (can be positive or negative)
+     */
+    public void updatePrisonerCount(int value) {
+        this.prisonerCount += value;
+        this.prisonerCountStringProperty.set(String.valueOf(this.prisonerCount));
+    }
+
+    public int getPrisonerCount() { return prisonerCount; }
+
+    public StringProperty getPrisonerCountStringProperty() { return prisonerCountStringProperty; }
+
 }
