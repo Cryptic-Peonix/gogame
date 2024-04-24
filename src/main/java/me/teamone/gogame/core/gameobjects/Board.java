@@ -191,6 +191,33 @@ public class Board extends GridPane{
         return adjacentSpaces;
     }
 
+    /**
+     * Counts the free liberties around a space. IGNORES SPACES THAT DO NOT MATCH TEAM
+     * @param space space to check.
+     * @param team team to match.
+     * @return a count of the liberties.
+     */
+    public int libertiesFree(BoardSpace space, Team team) {
+        ArrayList<BoardSpace> adjSpaces = getAdjacentSpaces(space);
+        int counter = 0;
+        for (BoardSpace s : adjSpaces) {
+            if (GoString.isSpaceDiagnonal(space, s)) {
+                try {
+                    if (s.getState() == SpaceState.OPEN || s.getStone().getTeam() != team) {
+                        counter++;
+                    }
+                } catch (NoStoneException ignore) {
+                }
+            }
+        }
+        return counter;
+    }
+
+    /**
+     * Checks the free liberties around a space.
+     * @param space space to check.
+     * @return a count of the liberties
+     */
     public int libertiesFree(BoardSpace space) {
         ArrayList<BoardSpace> adjSpaces = getAdjacentSpaces(space);
         int counter = 0;
@@ -202,6 +229,37 @@ public class Board extends GridPane{
             }
         }
         return counter;
+    }
+
+    /**
+     * Checks if a spaces filled liberties all match the same team. Use in combination with
+     * libertiesFree(), this method skips over empty spaces.
+     * @param space The BoardSpace to check.
+     * @param team The Team to match to.
+     * @return true if all liberties are of the same team, false if not.
+     */
+    public boolean surroundedLibertiesMatchTeam(BoardSpace space, Team team) {
+        ArrayList<BoardSpace> adjSpaces = getAdjacentSpaces(space);
+        for (BoardSpace s: adjSpaces) {
+            if (GoString.isSpaceDiagnonal(space, s)) {
+                if (s.getState() != SpaceState.OPEN) { // space either has a stone or is captured
+                    if (s.getState() == SpaceState.CAPTURED) {
+                        if (s.getCaptureOwner() != team) {
+                            return false;
+                        }
+                    }
+                    try {
+                        if (s.getState() == SpaceState.FILLED) {
+                            if (s.getStone().getTeam() != team) {
+                                return false;
+                            }
+                        }
+                    } catch (NoStoneException ignore) {
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public int diagonalsFree(BoardSpace space) {

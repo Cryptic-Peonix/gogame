@@ -30,7 +30,7 @@ public class Game {
     Added by Taran
     Property to hold the string to display the current player's turn
      */
-    private StringProperty currentPlayerStringProperty = new SimpleStringProperty("");
+    private final StringProperty currentPlayerStringProperty = new SimpleStringProperty("");
 
     private final Board board;
     private final int handicapCount;
@@ -64,39 +64,6 @@ public class Game {
     }
 
     /**
-     * Begin the game loop.
-     */
-    public void gameLoop() {
-        // game loop logic here
-    }
-
-    /**
-     * Method for a player turn in the command line
-     *
-     * Renamed to playerTurnCmd from playerTurn - Taran
-     *
-     * @param player The player object to effect.
-     */
-    public void playerTurnCmd(Player player) throws StonePlacementException, SpaceFilledException, isCapturedException, NoStoneException {
-        // get x, and y of location to attempt placement. This is done with cmd for now, must change when gui is created.
-        Scanner scan = new Scanner(System.in);
-        System.out.println(player.getName() + " please enter the x coordinate of the space you want to place ("
-                + this.board.getxSize() + "x" + this.board.getySize() + "):");
-        int coordX = scan.nextInt();
-        System.out.println(player.getName() + " please enter the y coordinate of the space you want to place ("
-                + this.board.getxSize() + "x" + this.board.getySize() + "):");
-        int coordY = scan.nextInt();
-        // create the stone
-        Stone stone = new Stone(player.getTeam(), stoneIDcounter);
-        int[] coords = {coordX, coordY};
-        // attempt to place stone
-        this.board.placeStone(stone, coords);
-        // if nothing goes wrong, incriment counter
-        this.stoneIDcounter++; // may move to game loop?
-        this.board.printBoard();
-    }
-
-    /**
      * Method for a player turn
      *
      * @param coords The coordinates to place a stone
@@ -114,10 +81,9 @@ public class Game {
         // see if we can make a new string with the space
         this.attemptStringCreate(space);
         // check if this space bridges one or more strings
-        //TODO: FIX BUG WHERE ONE SPACE GETS LEFT OUT ON PLACEMENT BETWEEN STIRNG AND STONE
         ArrayList<Integer> uniqueAdjacentGoStringIndexes = getUniqueAdjacentStringIndexes(space);
         if (uniqueAdjacentGoStringIndexes.size() > 1) {
-            // bypass checking cause we already did it
+            // bypass checking because we already did it
             space.setInString(true);
             this.goStrings.get(this.currentPlayer.getTeam()).get(uniqueAdjacentGoStringIndexes.get(0)).addSpace(space);
             attemptStringMerge(uniqueAdjacentGoStringIndexes, this.currentPlayer.getTeam());
@@ -130,32 +96,25 @@ public class Game {
             stringCleanup(string);
             captureChecker(string);
         }
-        System.out.println(space.getSide());
 
-        /**
-        if (space.isInString()) {
-            for (GoString string : goStrings.get(currentPlayer.getTeam())) {
-                if (string.inGoString(space) && string.isLoopV2()) {
-                    System.out.println("should capture");
-                    board.setCapturesInsideString(string, currentPlayer.getTeam());
+        // This is an easy way of doing it but we gotta make it work
+        // check every single space on the board and set capture if surrounded by enemy team
+        for (int i = 0; i < board.getxSize(); i++) {
+            for (int j = 0; j < board.getySize(); j++) {
+                BoardSpace s = board.getSpecificSpace(i, j);
+                if (s.getState() != SpaceState.CAPTURED && board.libertiesFree(s) == 0 && board.surroundedLibertiesMatchTeam(s, this.currentPlayer.getTeam())) {
+                    s.captureSpace(this.currentPlayer.getTeam());
                 }
             }
         }
-         */
 
-        //check if any strings are touching and combine them
-        //TODO: Create this method
+        System.out.println(space.getSide());
         this.printGoStrings();
 
         //calculate scores
 
-
-        //TODO: Check board for captures, and remove pieces and invalidate spaces for placement as needed
-
         //at the end of the turn, switch current players
         switchCurrentPlayer();
-
-        //this.board.printBoard();
         System.out.println();
     }
 
@@ -217,7 +176,6 @@ public class Game {
     }
 
     public void captureChecker (GoString string) {
-        Team team = string.getTeam();
         ArrayList<int[]> captureCannidites = new ArrayList<>();
         for (BoardSpace space : string.getSpaces()) {
             for (int pingsPerformed = 0; pingsPerformed < 4; pingsPerformed++) {
@@ -248,22 +206,30 @@ public class Game {
            cannidateString.getSpaces().add(board.getSpecificSpace(e[0], e[1]));
         });
         Map<String, Integer> boundingBox = cannidateString.getBoundingBox();
+        System.out.println("cannidates: " + cannidateString);
         System.out.println(boundingBox.toString());
         int minX = boundingBox.get("minX");
         int minY = boundingBox.get("minY");
         int maxX = boundingBox.get("maxX");
         int maxY = boundingBox.get("maxY");
         if (minX == maxX && minY == maxY) { //box is one square
-            if (board.libertiesFree(board.getSpecificSpace(minX, minY)) == 0) {
+            if (board.libertiesFree(board.getSpecificSpace(minX, minY)) == 0 && board.surroundedLibertiesMatchTeam(board.getSpecificSpace(minX, minY), team)) {
                 surrounded = true;
             }
         } else if (minX == maxX) { // box is a vertical line
-            //System.out.println("Vertical line Spanning from: " + minY + " - " + maxY + " on row: " + minX + ".");
+            System.out.println("Vertical line Spanning from: " + minY + " - " + maxY + " on row: " + minX + ".");
             boolean allValid = true;
             for (int y = minY; y <= maxY; y++) {
-                if (!(board.libertiesFree(board.getSpecificSpace(minX, y)) <= 1)) {
-                    allValid = false;
-                    break;
+                if (y == minY || y == maxY) { // if we are on and end of the line
+                    if (!(board.libertiesFree(board.getSpecificSpace(minX, y), team) <= 1)) {
+                        allValid = false;
+                        break;
+                    }
+                } else { // if we are in the middle of a line
+                    if (!(board.libertiesFree(board.getSpecificSpace(minX, y), team) <= 2)) { // stones in the middle have 2 free liberties
+                        allValid = false;
+                        break;
+                    }
                 }
             }
             if (allValid) {
@@ -272,24 +238,43 @@ public class Game {
         } else if (minY == maxY) { // horizontal line
             boolean allValid = true;
             for (int x = minX; x <= maxX; x++) {
-                if (!(board.libertiesFree(board.getSpecificSpace(x, minY)) <= 1)) {
-                    allValid = false;
-                    break;
+                if (x == minX || x == maxX) {
+                    if (!(board.libertiesFree(board.getSpecificSpace(x, minY), team) <= 1)) {
+                        allValid = false;
+                        break;
+                    }
+                } else {
+                    if (!(board.libertiesFree(board.getSpecificSpace(x, minY), team) <= 2)) {
+                        allValid = false;
+                        break;
+                    }
                 }
             }
             if (allValid) {
                 surrounded = true;
             }
-        } else { // we have a box of some sort TODO: MAKE ME WORK
+        } else { // we have more complex geometry, could be a box, could be some weird unconnected geometry, etc
             boolean allValid = true;
+            // loop through all spaces in the bounding box
             for (int x = minX; x <= maxX; x++) {
                 for (int y = minY; y <= maxY; y++) {
-                    // check all edges spaces
-                    System.out.println(x + ", " + y + " checking.");
-                    if (board.libertiesFree(board.getSpecificSpace(x, y)) != 0 ||
-                            board.diagonalsFree(board.getSpecificSpace(x,y)) != 0) {
-                        allValid = false;
-                        break;
+                    // check if the space is in our list of cannidates
+                    if (cannidateString.inGoString(board.getSpecificSpace(x, y))) {
+                        // check if the space is an edge
+                        if (x == minX || x == maxX || y == minY || y == maxY) {
+                            // check if the space is a corner
+                            if (x == minX && y == minY || x == minX && y == maxY || x == maxX && y == minY || x == maxX && y == maxY) {
+                                System.out.println(x + ", " + y + " checking corner here.");
+                                if (board.libertiesFree(board.getSpecificSpace(x,y), team) > 2) {
+                                    allValid = false;
+                                }
+                            } else { //if it's not a corner it's an edge
+                                System.out.println(x + ", " + y + " checking edge here.");
+                                if (board.libertiesFree(board.getSpecificSpace(x,y), team) > 3) {
+                                    allValid = false;
+                                }
+                            }
+                        }
                     }
                 }
                 if (!allValid) {
@@ -300,7 +285,8 @@ public class Game {
                 surrounded = true;
             }
         }
-        if (surrounded) {
+        // check the bounding box for proper surrounded
+        if (surrounded && verifyBoundingBox(minX, maxX, minY, maxY, team)) {
             cannidates.forEach(e -> { //capture
                 board.getSpecificSpace(e[0], e[1]).captureSpace(team);
                 if (team.equals(Team.WHITE)) {
@@ -314,6 +300,44 @@ public class Game {
         } else {
             System.out.println("not surrounded");
         }
+    }
+
+    /**
+     * Verify a bounding box to ensure all pieces bordering it are of the same team
+     * @param minX min x of box.
+     * @param maxX max x of box.
+     * @param minY min y of box.
+     * @param maxY max y of box.
+     * @param team team to check.
+     * @return True if all surrounding pieces are of the matching team, false if not.
+     */
+    private boolean verifyBoundingBox(int minX, int maxX, int minY, int maxY, Team team) {
+        try {
+            // bottom & top of box
+            for (int i = minX; i <= maxX; i++) {
+                // bottom
+                if (board.getSpecificSpace(i, minY - 1).getStone().getTeam() != team) {
+                    return false;
+                }
+                // top
+                if(board.getSpecificSpace(i, maxY + 1).getStone().getTeam() != team) {
+                    return  false;
+                }
+            }
+            // left and right
+            for (int j = minY; j <= maxY; j++) {
+                // left
+                if (board.getSpecificSpace(minX - 1, j).getStone().getTeam() != team) {
+                    return  false;
+                }
+                //right
+                if (board.getSpecificSpace(maxX + 1, j).getStone().getTeam() != team) {
+                    return false;
+                }
+            }
+        } catch (NoStoneException | ArrayIndexOutOfBoundsException ignore) {
+        }
+        return true;
     }
 
     private ArrayList<int[]> performPing(GoString string, BoardSpace space, PingDirection direction) {
@@ -526,7 +550,7 @@ public class Game {
         for (GoString string : black) {
             System.out.println(string.toString());
         }
-        System.out.println("");
+        System.out.println();
         System.out.println("White Strings: ");
         for (GoString stringw : white) {
             System.out.println(stringw.toString());
